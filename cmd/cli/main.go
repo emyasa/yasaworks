@@ -4,10 +4,16 @@ import (
 	"log"
 
     tea "github.com/charmbracelet/bubbletea"
+	"github.com/emyasa/yasaworks/internal/tui"
 )
 
 func main() {
-	if _, err := tea.NewProgram(nil, tea.WithAltScreen()).Run(); err != nil {
+	model, err := tui.NewModel()
+	if err != nil {
+		panic(err)
+	}
+
+	if _, err := tea.NewProgram(model, tea.WithAltScreen()).Run(); err != nil {
 		log.Fatal(err)
 	}
 }
