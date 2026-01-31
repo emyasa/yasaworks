@@ -1,12 +1,13 @@
 package main
 
 import (
-    "log"
+	"log"
 
-    tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
 	"github.com/charmbracelet/wish/bubbletea"
-	"github.com/charmbracelet/ssh"
+	"github.com/emyasa/yasaworks/internal/tui"
 )
 
 func main() {
@@ -15,9 +16,12 @@ func main() {
 		wish.WithHostKeyPath(".ssh/host_key"),
 		wish.WithMiddleware(
 			bubbletea.Middleware(func(sess ssh.Session) (tea.Model, []tea.ProgramOption) {
-				return nil, []tea.ProgramOption{
-					tea.WithAltScreen(),
+				model, err := tui.NewModel()
+				if err != nil {
+					return nil, []tea.ProgramOption{}
 				}
+				
+				return model, []tea.ProgramOption{tea.WithAltScreen()}
 			}),
 		),
 	)
