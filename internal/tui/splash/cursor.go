@@ -11,27 +11,27 @@ type cursorState struct {
 	visible bool
 }
 
-type CursorTickMsg struct {}
+type cursorTickMsg struct {}
 
 func (m Model) cursorInit() tea.Cmd {
 	return tea.Every(time.Millisecond*700, func(t time.Time) tea.Msg {
-		return CursorTickMsg{}
+		return cursorTickMsg{}
 	})
 }
 
-func (m Model) CursorUpdate(msg tea.Msg) (Model, tea.Cmd) {
+func (m Model) cursorUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg.(type) {
-	case CursorTickMsg:
+	case cursorTickMsg:
 		m.state.cursor.visible = !m.state.cursor.visible
 		return m, tea.Every(time.Millisecond*700, func(t time.Time) tea.Msg {
-			return CursorTickMsg{}
+			return cursorTickMsg{}
 		})
 	}
 
 	return m, nil
 }
 
-func (m Model) CursorView() string {
+func (m Model) cursorView() string {
 	if m.state.cursor.visible {
 		return lipgloss.NewStyle().
 			Background(lipgloss.Color("#FF0000")).

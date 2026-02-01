@@ -25,8 +25,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.viewportWidth = msg.Width
 		m.viewportHeight = msg.Height
-	case CursorTickMsg:
-		m, cmd := m.CursorUpdate(msg)
+	case cursorTickMsg:
+		m, cmd := m.cursorUpdate(msg)
 		return m, cmd
 	}
 
