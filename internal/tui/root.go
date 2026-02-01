@@ -17,7 +17,7 @@ func NewModel() (tea.Model, error) {
 }
 
 func (m model) Init() tea.Cmd {
-	return tea.Batch(m.splash.SplashInit())
+	return tea.Batch(m.splash.Init())
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -26,12 +26,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, tea.Quit
 	default:
 		var cmd tea.Cmd
-		m.splash, cmd = m.splash.SplashUpdate(msg)
+		m.splash, cmd = m.splash.Update(msg)
 		return m, cmd
 	}
 }
 
 func (m model) View() string {
-	return m.splash.SplashView()
+	return m.splash.View()
 }
 

@@ -16,11 +16,11 @@ type state struct {
 	cursor cursorState
 }
 
-func(m Model) SplashInit() tea.Cmd {
+func(m Model) Init() tea.Cmd {
 	return m.cursorInit()
 }
 
-func (m Model) SplashUpdate(msg tea.Msg) (Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {		
 	case tea.WindowSizeMsg:
 		m.viewportWidth = msg.Width
@@ -33,7 +33,7 @@ func (m Model) SplashUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m Model) SplashView() string {
+func (m Model) View() string {
 	return lipgloss.Place(
 		m.viewportWidth,
 		m.viewportHeight,
