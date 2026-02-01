@@ -3,7 +3,6 @@ package tui
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
 )
 
@@ -25,25 +24,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		return m, tea.Quit
-	case tea.WindowSizeMsg:
-		m.viewportWidth = msg.Width
-		m.viewportHeight = msg.Height
-	case splash.CursorTickMsg:
+	default:
 		var cmd tea.Cmd
-		m.splash, cmd = m.splash.CursorUpdate(msg)
+		m.splash, cmd = m.splash.SplashUpdate(msg)
 		return m, cmd
 	}
-
-	return m, nil
 }
 
 func (m model) View() string {
-	return lipgloss.Place(
-		m.viewportWidth,
-		m.viewportHeight,
-		lipgloss.Center,
-		lipgloss.Center,
-		m.splash.LogoView(),
-	)
+	return m.splash.SplashView()
 }
 
