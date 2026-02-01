@@ -1,4 +1,4 @@
-package tui
+package splash
 
 import (
 	"time"
@@ -13,13 +13,13 @@ type cursorState struct {
 
 type CursorTickMsg struct {}
 
-func (m model) CursorInit() tea.Cmd {
+func (m Model) cursorInit() tea.Cmd {
 	return tea.Every(time.Millisecond*700, func(t time.Time) tea.Msg {
 		return CursorTickMsg{}
 	})
 }
 
-func (m model) CursorUpdate(msg tea.Msg) (model, tea.Cmd) {
+func (m Model) CursorUpdate(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg.(type) {
 	case CursorTickMsg:
 		m.state.cursor.visible = !m.state.cursor.visible
@@ -31,7 +31,7 @@ func (m model) CursorUpdate(msg tea.Msg) (model, tea.Cmd) {
 	return m, nil
 }
 
-func (m model) CursorView() string {
+func (m Model) CursorView() string {
 	if m.state.cursor.visible {
 		return lipgloss.NewStyle().
 			Background(lipgloss.Color("#FF0000")).

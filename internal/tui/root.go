@@ -4,16 +4,13 @@ package tui
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/tui/splash"
 )
 
 type model struct {
-	state state
+	splash splash.Model
 	viewportWidth int
 	viewportHeight int
-}
-
-type state struct {
-	cursor cursorState
 }
 
 func NewModel() (tea.Model, error) {
@@ -21,7 +18,7 @@ func NewModel() (tea.Model, error) {
 }
 
 func (m model) Init() tea.Cmd {
-	return tea.Batch(m.CursorInit())
+	return tea.Batch(m.splash.SplashInit())
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -31,8 +28,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.viewportWidth = msg.Width
 		m.viewportHeight = msg.Height
-	case CursorTickMsg:
-		m, cmd := m.CursorUpdate(msg)
+	case splash.CursorTickMsg:
+		var cmd tea.Cmd
+		m.splash, cmd = m.splash.CursorUpdate(msg)
 		return m, cmd
 	}
 
@@ -45,7 +43,7 @@ func (m model) View() string {
 		m.viewportHeight,
 		lipgloss.Center,
 		lipgloss.Center,
-		m.LogoView(),
+		m.splash.LogoView(),
 	)
 }
 
