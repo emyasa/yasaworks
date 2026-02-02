@@ -2,6 +2,8 @@
 package splash
 
 import (
+	"time"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -16,8 +18,14 @@ type state struct {
 	cursor cursorState
 }
 
+type SplashCompleteMsg struct {}
+
 func(m Model) Init() tea.Cmd {
-	return m.cursorInit()
+	completeSplashCmd := tea.Tick(time.Second*2, func(t time.Time) tea.Msg {
+		return SplashCompleteMsg{}
+	})
+
+	return tea.Batch(completeSplashCmd, m.cursorInit())
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
