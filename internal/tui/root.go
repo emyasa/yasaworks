@@ -3,6 +3,7 @@ package tui
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
 )
 
@@ -30,9 +31,12 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg.(type) {
+	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		return m, tea.Quit
+	case tea.WindowSizeMsg:
+		m.viewportWidth = msg.Width
+		m.viewportHeight = msg.Height
 	case splash.SplashCompleteMsg:
 		m.page = blogPage
 	}
@@ -50,8 +54,24 @@ func (m model) View() string {
 	switch m.page {
 	case splashPage:
 		return m.splash.View()
-	}
+	default:
+		header := m.HeaderView()
 
-	return ""
+		items := []string{}
+		items = append(items, header)
+
+		child := lipgloss.JoinVertical(
+			lipgloss.Left,
+			items...,
+		)
+
+		return lipgloss.Place(
+			m.viewportWidth,
+			m.viewportHeight,
+			lipgloss.Center,
+			lipgloss.Center,
+			lipgloss.NewStyle().Render(child),
+		)
+	}
 }
 
