@@ -56,12 +56,14 @@ func (m model) View() string {
 		return m.splash.View()
 	default:
 		header := m.HeaderView()
+		footer := m.FooterView()
 
 		items := []string{}
 		items = append(items, header)
+		items = append(items, footer)
 
 		child := lipgloss.JoinVertical(
-			lipgloss.Left,
+			lipgloss.Center,
 			items...,
 		)
 
