@@ -2,6 +2,8 @@
 package tui
 
 import (
+	"math"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
@@ -13,16 +15,30 @@ const (
 	blogPage
 )
 
+type blogEntry = int
+const (
+	firstEntry blogEntry = iota
+	secondEntry
+)
+
 type model struct {
-	page page
 	splash splash.Model
+
+	page page
+	blogEntries []blogEntry
 	viewportWidth int
 	viewportHeight int
+	widthContainer int
+	heightContainer int
 }
 
 func NewModel() (tea.Model, error) {
 	return model{
 		page: splashPage,
+		blogEntries: []blogEntry {
+			firstEntry,
+			secondEntry,
+		},
 	}, nil
 }
 
@@ -37,6 +53,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.viewportWidth = msg.Width
 		m.viewportHeight = msg.Height
+		m.widthContainer = 80
+		m.heightContainer = int(math.Min(float64(msg.Height), 30))
 	case splash.SplashCompleteMsg:
 		m.page = blogPage
 	}
@@ -55,15 +73,22 @@ func (m model) View() string {
 	case splashPage:
 		return m.splash.View()
 	default:
-		header := m.HeaderView()
-		footer := m.FooterView()
+		header := m.headerView()
+		content := m.getContent()
+		footer := m.footerView()
+
+		height := m.heightContainer
+		height -= lipgloss.Height(header)
+		height -= lipgloss.Height(footer)
+		body := lipgloss.NewStyle().Width(80).Height(height).Render(content)
 
 		items := []string{}
 		items = append(items, header)
+		items = append(items, body)
 		items = append(items, footer)
 
 		child := lipgloss.JoinVertical(
-			lipgloss.Center,
+			lipgloss.Left,
 			items...,
 		)
 
@@ -72,7 +97,10 @@ func (m model) View() string {
 			m.viewportHeight,
 			lipgloss.Center,
 			lipgloss.Center,
-			lipgloss.NewStyle().Render(child),
+			lipgloss.NewStyle().
+				MaxWidth(m.widthContainer).
+				MaxHeight(m.heightContainer).
+				Render(child),
 		)
 	}
 }

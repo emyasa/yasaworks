@@ -5,7 +5,7 @@ import (
 	"github.com/charmbracelet/lipgloss/table"
 )
 
-func (m model) HeaderView() string {
+func (m model) headerView() string {
 	logo := lipgloss.NewStyle().Bold(true).Render("yasaworks")
 	blog := lipgloss.NewStyle().Render("blog")
 	rtfwm := lipgloss.NewStyle().Render("FWM")
@@ -34,7 +34,7 @@ func (m model) HeaderView() string {
 		Render()
 
 	return lipgloss.Place(
-		m.viewportWidth,
+		m.widthContainer,
 		lipgloss.Height(table),
 		lipgloss.Center,
 		lipgloss.Center,

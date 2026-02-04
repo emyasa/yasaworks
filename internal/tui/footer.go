@@ -4,7 +4,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func (m model) FooterView() string {
+func (m model) footerView() string {
 	table := lipgloss.NewStyle().
 		Width(78).
 		BorderTop(true).
@@ -18,7 +18,7 @@ func (m model) FooterView() string {
 		Render()
 
 	return lipgloss.Place(
-		m.viewportWidth,
+		m.widthContainer,
 		lipgloss.Height(table),
 		lipgloss.Center,
 		lipgloss.Center,
