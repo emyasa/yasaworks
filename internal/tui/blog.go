@@ -7,14 +7,28 @@ import (
 )
 
 func (m model) getBlogMenuContent() string {
+	menuWidth := 0
 	pages := strings.Builder{}
 
 	for _, p := range m.blogEntries {
+		w := lipgloss.Width(getBlogEntryName(p))
+		if w > menuWidth {
+			menuWidth = w
+		}
+	}
+
+	menuItem := lipgloss.NewStyle().
+		Width(menuWidth+2).
+		Padding(0, 1)
+
+	for _, p := range m.blogEntries {
 		name := getBlogEntryName(p)
-		pages.WriteString(name + "\n")
+		content := menuItem.Render(name)
+		pages.WriteString(content + "\n")
 	}
 
 	return lipgloss.NewStyle().
+		MarginTop(1).
 		Padding(0, 1).
 		Render(pages.String())
 }
