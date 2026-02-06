@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/tui/blog"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
 )
 
@@ -17,6 +18,7 @@ const (
 
 type model struct {
 	splash splash.Model
+	blog blog.Model
 
 	page page
 	viewportWidth int
