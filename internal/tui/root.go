@@ -15,17 +15,10 @@ const (
 	blogPage
 )
 
-type blogEntry = int
-const (
-	firstEntry blogEntry = iota
-	secondEntry
-)
-
 type model struct {
 	splash splash.Model
 
 	page page
-	blogEntries []blogEntry
 	viewportWidth int
 	viewportHeight int
 	widthContainer int
@@ -35,10 +28,6 @@ type model struct {
 func NewModel() (tea.Model, error) {
 	return model{
 		page: splashPage,
-		blogEntries: []blogEntry {
-			firstEntry,
-			secondEntry,
-		},
 	}, nil
 }
 

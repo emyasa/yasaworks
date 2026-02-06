@@ -1,4 +1,5 @@
-package tui
+// Package blog handles all the blog-related entries
+package blog
 
 import (
 	"strings"
@@ -6,11 +7,32 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func (m model) getBlogMenuContent() string {
+type blogEntry = int
+const (
+	firstEntry blogEntry = iota
+	secondEntry
+)
+
+var blogEntries = []blogEntry{
+	firstEntry,
+	secondEntry,
+}
+
+func BlogView() string {
+	menuContent := getBlogMenuContent()
+
+	return lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		menuContent,
+		"  ",
+	)
+}
+
+func getBlogMenuContent() string {
 	menuWidth := 0
 	pages := strings.Builder{}
 
-	for _, p := range m.blogEntries {
+	for _, p := range blogEntries {
 		w := lipgloss.Width(getBlogEntryName(p))
 		if w > menuWidth {
 			menuWidth = w
@@ -21,7 +43,7 @@ func (m model) getBlogMenuContent() string {
 		Width(menuWidth+2).
 		Padding(0, 1)
 
-	for _, p := range m.blogEntries {
+	for _, p := range blogEntries {
 		name := getBlogEntryName(p)
 		content := menuItem.Render(name)
 		pages.WriteString(content + "\n")
@@ -42,15 +64,5 @@ func getBlogEntryName(entry blogEntry) string {
 	}
 
 	return ""
-}
-
-func (m model) blogView() string {
-	menuContent := m.getBlogMenuContent()
-
-	return lipgloss.JoinHorizontal(
-		lipgloss.Top,
-		menuContent,
-		"  ",
-	)
 }
 
