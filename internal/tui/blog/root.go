@@ -7,19 +7,17 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type blogEntry = int
-const (
-	firstEntry blogEntry = iota
-	secondEntry
-)
+type blogEntry struct {
+	name string
+}
 
 var blogEntries = []blogEntry{
-	firstEntry,
-	secondEntry,
+	{name: "First Entry"},
+	{name: "Next Entry"},
 }
 
 func BlogView() string {
-	menuContent := getBlogMenuContent()
+	menuContent := renderBlogMenu(blogEntries)
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Top,
@@ -28,41 +26,36 @@ func BlogView() string {
 	)
 }
 
-func getBlogMenuContent() string {
-	menuWidth := 0
-	pages := strings.Builder{}
+func renderBlogMenu(entries []blogEntry) string {
+	menuWidth := maxEntryWidth(entries)
 
-	for _, p := range blogEntries {
-		w := lipgloss.Width(getBlogEntryName(p))
-		if w > menuWidth {
-			menuWidth = w
+	menuItemStyle := lipgloss.NewStyle().
+		Width(menuWidth + 2).
+		Padding(0, 1)
+	
+	var sb strings.Builder
+	for i, e := range entries {
+		sb.WriteString(menuItemStyle.Render(e.name))
+		if i < len(entries) - 1 {
+			sb.WriteString("\n")
 		}
 	}
 
-	menuItem := lipgloss.NewStyle().
-		Width(menuWidth+2).
-		Padding(0, 1)
-
-	for _, p := range blogEntries {
-		name := getBlogEntryName(p)
-		content := menuItem.Render(name)
-		pages.WriteString(content + "\n")
-	}
-
-	return lipgloss.NewStyle().
+	containerStyle := lipgloss.NewStyle().
 		MarginTop(1).
-		Padding(0, 1).
-		Render(pages.String())
+		Padding(0, 1)
+	
+	return containerStyle.Render(sb.String())
 }
 
-func getBlogEntryName(entry blogEntry) string {
-	switch entry {
-	case firstEntry:
-		return "First Entry"
-	case secondEntry:
-		return "Second Entry"
+func maxEntryWidth(entries []blogEntry) int {
+	max := 0
+	for _, e := range entries {
+		if w := lipgloss.Width(e.name); w > max {
+			max = w
+		}
 	}
 
-	return ""
+	return max
 }
 
