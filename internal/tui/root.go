@@ -52,7 +52,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.page = blogPage
 	}
 
-	if m.page == splashPage {
+	switch m.page {
+	case splashPage:
 		var cmd tea.Cmd
 		m.splash, cmd = m.splash.Update(msg)
 		return m, cmd
@@ -66,23 +67,29 @@ func (m model) View() string {
 	case splashPage:
 		return m.splash.View()
 	default:
-		header := m.headerView()
-		content := m.getContent()
-		footer := m.footerView()
+		return m.layout(
+			m.headerView(),
+			m.getContent(),
+			m.footerView(),
+		)
+	}
+}
 
+func (m model) layout(header, content, footer string) string {
 		height := m.heightContainer
 		height -= lipgloss.Height(header)
 		height -= lipgloss.Height(footer)
-		body := lipgloss.NewStyle().Width(80).Height(height).Render(content)
 
-		items := []string{}
-		items = append(items, header)
-		items = append(items, body)
-		items = append(items, footer)
+		body := lipgloss.NewStyle().
+			Width(80).
+			Height(height).
+			Render(content)
 
 		child := lipgloss.JoinVertical(
 			lipgloss.Left,
-			items...,
+			header,
+			body,
+			footer,
 		)
 
 		return lipgloss.Place(
@@ -95,6 +102,5 @@ func (m model) View() string {
 				MaxHeight(m.heightContainer).
 				Render(child),
 		)
-	}
 }
 
