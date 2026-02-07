@@ -1,4 +1,4 @@
-// Package tui implements the terminal user interface for Yasaworks
+// Package tui implements the terminal user interface for Yasaworks. It's considered the lowest level module in tui package orchastrating other higher level modules.
 package tui
 
 import (
@@ -6,6 +6,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+
+	_ "github.com/emyasa/yasaworks/internal/tui/blog/entries"
 	"github.com/emyasa/yasaworks/internal/tui/blog"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
 )

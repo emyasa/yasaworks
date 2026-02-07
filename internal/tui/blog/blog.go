@@ -4,7 +4,6 @@ package blog
 import (
 	"strings"
 
-	"github.com/charmbracelet/bubbles/viewport"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -12,27 +11,30 @@ type Model struct {
 	selected int
 }
 
-type blogEntry struct {
-	name string
-	content viewport.Model
+type BlogEntry struct {
+	Name string
+	Content string
 }
 
-var blogEntries = []blogEntry{
-	{name: "First Entry"},
-	{name: "Next Entry"},
+var blogEntries = []BlogEntry{}
+
+func Register(blogEntry BlogEntry) {
+	blogEntries = append(blogEntries, blogEntry)
 }
 
 func (m Model) BlogView() string {
 	menuContent := renderBlogMenu(blogEntries, m.selected)
+	detailContent := blogEntries[m.selected].Content
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Top,
 		menuContent,
 		"  ",
+		detailContent,
 	)
 }
 
-func renderBlogMenu(entries []blogEntry, selected int) string {
+func renderBlogMenu(entries []BlogEntry, selected int) string {
 	menuWidth := maxEntryWidth(entries)
 
 	var sb strings.Builder
@@ -47,7 +49,7 @@ func renderBlogMenu(entries []blogEntry, selected int) string {
 				Bold(true)
 		}
 
-		sb.WriteString(menuItemStyle.Render(e.name))
+		sb.WriteString(menuItemStyle.Render(e.Name))
 		if i < len(entries) - 1 {
 			sb.WriteString("\n")
 		}
@@ -60,10 +62,10 @@ func renderBlogMenu(entries []blogEntry, selected int) string {
 	return containerStyle.Render(sb.String())
 }
 
-func maxEntryWidth(entries []blogEntry) int {
+func maxEntryWidth(entries []BlogEntry) int {
 	max := 0
 	for _, e := range entries {
-		if w := lipgloss.Width(e.name); w > max {
+		if w := lipgloss.Width(e.Name); w > max {
 			max = w
 		}
 	}
