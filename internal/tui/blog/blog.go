@@ -26,7 +26,7 @@ func Register(blogEntry BlogEntry) {
 
 func (m Model) BlogView() string {
 	menuContent := m.renderBlogMenu(blogEntries, m.selected)
-	detailContent := blogEntries[m.selected].Content
+	detailContent := m.renderBlogDetail(blogEntries, m.selected)
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Top,
@@ -62,6 +62,14 @@ func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
 		Padding(0, 1)
 	
 	return containerStyle.Render(sb.String())
+}
+
+func (m Model) renderBlogDetail(entries []BlogEntry, selected int) string {
+	containerStyle := m.Theme.Base().
+		MarginTop(1).
+		Padding(0, 1)
+	
+	return containerStyle.Render(entries[selected].Content)
 }
 
 func maxEntryWidth(entries []BlogEntry) int {
