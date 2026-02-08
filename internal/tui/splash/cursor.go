@@ -4,7 +4,6 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 type cursorState struct {
@@ -33,8 +32,8 @@ func (m Model) cursorUpdate(msg tea.Msg) (Model, tea.Cmd) {
 
 func (m Model) cursorView() string {
 	if m.state.cursor.visible {
-		return lipgloss.NewStyle().
-			Background(lipgloss.Color("#FF0000")).
+		return m.Theme.Base().
+			Background(m.Theme.Brand()).
 			Render(" ")
 	}
 

@@ -6,9 +6,11 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
 type Model struct {
+	Theme theme.Theme
 	state state
 	viewportWidth int
 	viewportHeight int

@@ -7,9 +7,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
-	_ "github.com/emyasa/yasaworks/internal/tui/blog/entries"
 	"github.com/emyasa/yasaworks/internal/tui/blog"
+	_ "github.com/emyasa/yasaworks/internal/tui/blog/entries"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
+	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
 type page = int
@@ -30,7 +31,10 @@ type model struct {
 }
 
 func NewModel() (tea.Model, error) {
+	basicTheme := theme.BasicTheme()
+
 	return model{
+		splash: splash.Model{ Theme: basicTheme },
 		page: splashPage,
 	}, nil
 }
