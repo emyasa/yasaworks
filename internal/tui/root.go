@@ -67,6 +67,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		var cmd tea.Cmd
 		m.splash, cmd = m.splash.Update(msg)
 		return m, cmd
+	case blogPage:
+		var cmd tea.Cmd
+		m.blog, cmd = m.blog.Update(msg)
+		return m, cmd
 	}
 
 	return m, nil

@@ -4,6 +4,7 @@ package blog
 import (
 	"strings"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
@@ -24,7 +25,29 @@ func Register(blogEntry BlogEntry) {
 	blogEntries = append(blogEntries, blogEntry)
 }
 
-func (m Model) BlogView() string {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "tab", "down", "j":
+			if m.selected < len(blogEntries) - 1 {
+				m.selected += 1
+			}
+
+			return m, nil
+		case "shift+tab", "up", "k":
+			if m.selected > 0 {
+				m.selected -= 1
+			}
+			
+			return m, nil
+		}
+	}
+
+	return m, nil
+}
+
+func (m Model) View() string {
 	menuContent := m.renderBlogMenu(blogEntries, m.selected)
 	detailContent := m.renderBlogDetail(blogEntries, m.selected)
 

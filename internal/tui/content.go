@@ -5,7 +5,7 @@ func (m model) getContent() string {
 	page := "unknown"
 	switch m.page {
 	case blogPage:
-		page = m.blog.BlogView()
+		page = m.blog.View()
 	}
 
 	return page
