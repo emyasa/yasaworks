@@ -26,7 +26,7 @@ func (m model) headerView() string {
 		Border(lipgloss.NormalBorder()).
 		BorderStyle(m.theme.Base().Foreground(m.theme.Border())).
 		Row(tabs...).
-		Width(m.widthContainer).
+		Width(m.widthContainer - 2).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			return m.theme.Base().
 				Padding(0, 1).

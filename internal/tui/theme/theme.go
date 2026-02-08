@@ -19,7 +19,7 @@ func BasicTheme() Theme {
 
 	brandColor := lipgloss.Color("#FF0000")
 	accentColor := lipgloss.AdaptiveColor{Dark: "#FFFFFF", Light: "#11181C"}
-	borderColor := lipgloss.AdaptiveColor{Dark: "#3A3F42", Light: "#D7DBDF"}
+	borderColor := lipgloss.AdaptiveColor{Dark: "#53565A", Light: "#D7DBDF"}
 	highlight := brandColor
 
 	return Theme{

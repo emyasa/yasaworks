@@ -9,10 +9,7 @@ func (m model) footerView() string {
 		Width(78).
 		BorderTop(true).
 		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.AdaptiveColor{
-			Dark: "#3A3F42",
-			Light: "#D7DBDF",
-		}).
+		BorderForeground(m.theme.Border()).
 		PaddingBottom(1).
 		Align(lipgloss.Center).
 		Render()
