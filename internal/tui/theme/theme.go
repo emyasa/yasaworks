@@ -9,6 +9,7 @@ type Theme struct {
 
 	brand lipgloss.TerminalColor
 	accent lipgloss.TerminalColor
+	border lipgloss.TerminalColor
 	highlight lipgloss.TerminalColor
 }
 
@@ -18,6 +19,7 @@ func BasicTheme() Theme {
 
 	brandColor := lipgloss.Color("#FF0000")
 	accentColor := lipgloss.AdaptiveColor{Dark: "#FFFFFF", Light: "#11181C"}
+	borderColor := lipgloss.AdaptiveColor{Dark: "#3A3F42", Light: "#D7DBDF"}
 	highlight := brandColor
 
 	return Theme{
@@ -25,6 +27,7 @@ func BasicTheme() Theme {
 		base: defaultRenderer.NewStyle().Foreground(baseColor),
 		brand: brandColor,
 		accent: accentColor,
+		border: borderColor,
 		highlight: highlight,
 	}
 }
@@ -43,6 +46,10 @@ func (b Theme) Accent() lipgloss.TerminalColor {
 
 func (b Theme) Brand() lipgloss.TerminalColor {
 	return b.brand
+}
+
+func (b Theme) Border() lipgloss.TerminalColor {
+	return b.border
 }
 
 func (b Theme) Highlight() lipgloss.TerminalColor {

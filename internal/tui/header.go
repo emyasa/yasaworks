@@ -6,10 +6,14 @@ import (
 )
 
 func (m model) headerView() string {
-	logo := lipgloss.NewStyle().Bold(true).Render("yasaworks")
-	blog := lipgloss.NewStyle().Render("blog")
-	rtfwm := lipgloss.NewStyle().Render("FWM")
-	contact := lipgloss.NewStyle().Render("contact")
+	bold := m.theme.TextAccent().Bold(true).Render
+	accent := m.theme.TextAccent().Render
+	base := m.theme.Base().Render
+
+	logo := bold("yasaworks")
+	blog := bold("b") + accent(" blog")
+	rtfwm := accent("r") + base(" TFWM")
+	contact := accent("c") + base(" contact")
 
 	tabs := []string{
 		logo,
@@ -20,14 +24,11 @@ func (m model) headerView() string {
 
 	table := table.New().
 		Border(lipgloss.NormalBorder()).
-		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.AdaptiveColor{
-			Dark: "#3A3F42",
-			Light: "#D7DBDF",
-		})).
-		Rows(tabs).
-		Width(78).
+		BorderStyle(m.theme.Base().Foreground(m.theme.Border())).
+		Row(tabs...).
+		Width(m.widthContainer).
 		StyleFunc(func(row, col int) lipgloss.Style {
-			return lipgloss.NewStyle().
+			return m.theme.Base().
 				Padding(0, 1).
 				AlignHorizontal(lipgloss.Center)
 		}).

@@ -20,6 +20,7 @@ const (
 )
 
 type model struct {
+	theme theme.Theme
 	splash splash.Model
 	blog blog.Model
 
@@ -34,6 +35,7 @@ func NewModel() (tea.Model, error) {
 	basicTheme := theme.BasicTheme()
 
 	return model{
+		theme: basicTheme,
 		splash: splash.Model{ Theme: basicTheme },
 		blog: blog.Model{ Theme: basicTheme },
 		page: splashPage,
@@ -102,7 +104,7 @@ func (m model) layout(header, content, footer string) string {
 			m.viewportHeight,
 			lipgloss.Center,
 			lipgloss.Center,
-			lipgloss.NewStyle().
+			m.theme.Base().
 				MaxWidth(m.widthContainer).
 				MaxHeight(m.heightContainer).
 				Render(child),
