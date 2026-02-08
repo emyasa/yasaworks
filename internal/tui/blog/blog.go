@@ -46,8 +46,8 @@ func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
 			Padding(0, 1)
 
 		if i == selected {
-			menuItemStyle = menuItemStyle.Background(lipgloss.Color("#555")).
-				Foreground(lipgloss.Color("#fff")).
+			menuItemStyle = menuItemStyle.Background(m.Theme.Highlight()).
+				Foreground(m.Theme.Accent()).
 				Bold(true)
 		}
 
@@ -57,7 +57,7 @@ func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
 		}
 	}
 
-	containerStyle := lipgloss.NewStyle().
+	containerStyle := m.Theme.Base().
 		MarginTop(1).
 		Padding(0, 1)
 	
