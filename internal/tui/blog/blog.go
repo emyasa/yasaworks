@@ -5,9 +5,11 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
 type Model struct {
+	Theme theme.Theme
 	selected int
 }
 
@@ -23,7 +25,7 @@ func Register(blogEntry BlogEntry) {
 }
 
 func (m Model) BlogView() string {
-	menuContent := renderBlogMenu(blogEntries, m.selected)
+	menuContent := m.renderBlogMenu(blogEntries, m.selected)
 	detailContent := blogEntries[m.selected].Content
 
 	return lipgloss.JoinHorizontal(
@@ -34,12 +36,12 @@ func (m Model) BlogView() string {
 	)
 }
 
-func renderBlogMenu(entries []BlogEntry, selected int) string {
+func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
 	menuWidth := maxEntryWidth(entries)
 
 	var sb strings.Builder
 	for i, e := range entries {
-		menuItemStyle := lipgloss.NewStyle().
+		menuItemStyle := m.Theme.Base().
 			Width(menuWidth + 2).
 			Padding(0, 1)
 

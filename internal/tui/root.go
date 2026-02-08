@@ -35,6 +35,7 @@ func NewModel() (tea.Model, error) {
 
 	return model{
 		splash: splash.Model{ Theme: basicTheme },
+		blog: blog.Model{ Theme: basicTheme },
 		page: splashPage,
 	}, nil
 }
