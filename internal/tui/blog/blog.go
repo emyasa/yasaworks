@@ -4,6 +4,7 @@ package blog
 import (
 	"strings"
 
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
@@ -18,6 +19,7 @@ type Model struct {
 type BlogEntry struct {
 	Name string
 	Content string
+	Viewport *viewport.Model
 }
 
 var blogEntries = []BlogEntry{}
@@ -30,17 +32,22 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "tab", "down", "j":
+		case "tab", "j":
 			if m.selected < len(blogEntries) - 1 {
 				m.selected += 1
 			}
 
 			return m, nil
-		case "shift+tab", "up", "k":
+		case "shift+tab", "k":
 			if m.selected > 0 {
 				m.selected -= 1
 			}
 			
+			return m, nil
+		case "down":
+			vp := blogEntries[m.selected].Viewport
+			vp.ScrollDown(1)
+
 			return m, nil
 		}
 	}
@@ -94,7 +101,7 @@ func (m Model) renderBlogDetail(entries []BlogEntry, selected int) string {
 		MarginTop(1).
 		Padding(0, 1)
 	
-	return containerStyle.Render(entries[selected].Content)
+	return containerStyle.Render(entries[selected].Viewport.View())
 }
 
 func maxEntryWidth(entries []BlogEntry) int {
