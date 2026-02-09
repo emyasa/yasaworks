@@ -11,6 +11,7 @@ import (
 
 type Model struct {
 	Theme theme.Theme
+	menuWidth int
 	selected int
 }
 
@@ -60,12 +61,12 @@ func (m Model) View() string {
 }
 
 func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
-	menuWidth := maxEntryWidth(entries)
+	m.menuWidth = maxEntryWidth(entries)
 
 	var sb strings.Builder
 	for i, e := range entries {
 		menuItemStyle := m.Theme.Base().
-			Width(menuWidth + 2).
+			Width(m.menuWidth + 2).
 			Padding(0, 1)
 
 		if i == selected {
@@ -83,12 +84,13 @@ func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
 	containerStyle := m.Theme.Base().
 		MarginTop(1).
 		Padding(0, 1)
-	
+
 	return containerStyle.Render(sb.String())
 }
 
 func (m Model) renderBlogDetail(entries []BlogEntry, selected int) string {
 	containerStyle := m.Theme.Base().
+		Width(80 - m.menuWidth).
 		MarginTop(1).
 		Padding(0, 1)
 	
