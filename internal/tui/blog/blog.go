@@ -2,10 +2,12 @@
 package blog
 
 import (
+	"embed"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
@@ -22,10 +24,31 @@ type BlogEntry struct {
 	Viewport *viewport.Model
 }
 
+//go:embed entries/*.md
+var entriesFS embed.FS
 var blogEntries = []BlogEntry{}
 
-func Register(blogEntry BlogEntry) {
-	blogEntries = append(blogEntries, blogEntry)
+func (m Model) Init() tea.Cmd {
+	r, _ := glamour.NewTermRenderer(
+	glamour.WithAutoStyle(),
+	glamour.WithWordWrap(50))
+
+	firstEntryContent, err := entriesFS.ReadFile("entries/first.md")
+	if err != nil {
+		panic(err)
+	}
+
+	detailContent, _ := r.Render(string(firstEntryContent))
+	vp := viewport.New(50, 10)
+	vp.SetContent(detailContent)
+
+	blogEntries = append(blogEntries, BlogEntry{
+		Name: "First Entry",
+		Content: string(firstEntryContent),
+		Viewport: &vp,
+	})
+	
+	return nil
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
@@ -96,12 +119,35 @@ func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
 }
 
 func (m Model) renderBlogDetail(entries []BlogEntry, selected int) string {
+	vp := entries[selected].Viewport
+	var navParts []string
+	if vp.YOffset > 0 {
+		navParts = append(navParts, "<< p prev")
+	}
+
+	if vp.YOffset+vp.Height < vp.TotalLineCount() {
+		navParts = append(navParts, "n next >>")
+	}
+
+	nav := strings.Join(navParts, " | ")
+	containerWidth := 80 - m.menuWidth
+
+	navStyle := m.Theme.Base().
+		Width(45).
+		Align(lipgloss.Right)
+
+	content := lipgloss.JoinVertical(
+		lipgloss.Top,
+		vp.View(),
+		navStyle.Render(nav),
+	)
+
 	containerStyle := m.Theme.Base().
-		Width(80 - m.menuWidth).
+		Width(containerWidth).
 		MarginTop(1).
 		Padding(0, 1)
-	
-	return containerStyle.Render(entries[selected].Viewport.View())
+
+	return containerStyle.Render(content)
 }
 
 func maxEntryWidth(entries []BlogEntry) int {

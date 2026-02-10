@@ -8,7 +8,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/emyasa/yasaworks/internal/tui/blog"
-	_ "github.com/emyasa/yasaworks/internal/tui/blog/entries"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
@@ -43,7 +42,7 @@ func NewModel() (tea.Model, error) {
 }
 
 func (m model) Init() tea.Cmd {
-	return tea.Batch(m.splash.Init())
+	return tea.Batch(m.splash.Init(), m.blog.Init())
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
