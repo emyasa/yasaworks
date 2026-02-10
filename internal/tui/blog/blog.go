@@ -55,21 +55,26 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "tab", "j":
+		case "tab", "j", "down":
 			if m.selected < len(blogEntries) - 1 {
 				m.selected += 1
 			}
 
 			return m, nil
-		case "shift+tab", "k":
+		case "shift+tab", "k", "up":
 			if m.selected > 0 {
 				m.selected -= 1
 			}
 			
 			return m, nil
-		case "down":
+		case "n":
 			vp := blogEntries[m.selected].Viewport
-			vp.ScrollDown(1)
+			vp.ScrollDown(10)
+
+			return m, nil
+		case "p":
+			vp := blogEntries[m.selected].Viewport
+			vp.ScrollUp(10)
 
 			return m, nil
 		}
