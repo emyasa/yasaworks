@@ -18,15 +18,14 @@ type Model struct {
 	selected int
 }
 
-type BlogEntry struct {
-	Name string
-	Content string
-	Viewport *viewport.Model
+type blogEntry struct {
+	name string
+	viewport *viewport.Model
 }
 
 //go:embed entries/*.md
 var entriesFS embed.FS
-var blogEntries = []BlogEntry{}
+var blogEntries = []blogEntry{}
 
 func (m Model) Init() tea.Cmd {
 	r, _ := glamour.NewTermRenderer(
@@ -42,10 +41,9 @@ func (m Model) Init() tea.Cmd {
 	vp := viewport.New(50, 10)
 	vp.SetContent(detailContent)
 
-	blogEntries = append(blogEntries, BlogEntry{
-		Name: "First Entry",
-		Content: string(firstEntryContent),
-		Viewport: &vp,
+	blogEntries = append(blogEntries, blogEntry{
+		name: "First Entry",
+		viewport: &vp,
 	})
 	
 	return nil
@@ -68,12 +66,12 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			
 			return m, nil
 		case "n":
-			vp := blogEntries[m.selected].Viewport
+			vp := blogEntries[m.selected].viewport
 			vp.ScrollDown(10)
 
 			return m, nil
 		case "p":
-			vp := blogEntries[m.selected].Viewport
+			vp := blogEntries[m.selected].viewport
 			vp.ScrollUp(10)
 
 			return m, nil
@@ -95,7 +93,7 @@ func (m Model) View() string {
 	)
 }
 
-func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
+func (m Model) renderBlogMenu(entries []blogEntry, selected int) string {
 	m.menuWidth = maxEntryWidth(entries)
 
 	var sb strings.Builder
@@ -110,7 +108,7 @@ func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
 				Bold(true)
 		}
 
-		sb.WriteString(menuItemStyle.Render(e.Name))
+		sb.WriteString(menuItemStyle.Render(e.name))
 		if i < len(entries) - 1 {
 			sb.WriteString("\n")
 		}
@@ -123,8 +121,8 @@ func (m Model) renderBlogMenu(entries []BlogEntry, selected int) string {
 	return containerStyle.Render(sb.String())
 }
 
-func (m Model) renderBlogDetail(entries []BlogEntry, selected int) string {
-	vp := entries[selected].Viewport
+func (m Model) renderBlogDetail(entries []blogEntry, selected int) string {
+	vp := entries[selected].viewport
 	var navParts []string
 	if vp.YOffset > 0 {
 		navParts = append(navParts, "<< p prev")
@@ -155,10 +153,10 @@ func (m Model) renderBlogDetail(entries []BlogEntry, selected int) string {
 	return containerStyle.Render(content)
 }
 
-func maxEntryWidth(entries []BlogEntry) int {
+func maxEntryWidth(entries []blogEntry) int {
 	max := 0
 	for _, e := range entries {
-		if w := lipgloss.Width(e.Name); w > max {
+		if w := lipgloss.Width(e.name); w > max {
 			max = w
 		}
 	}
