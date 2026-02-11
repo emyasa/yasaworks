@@ -26,7 +26,7 @@ func (m Model) navView(entries []blogEntry, selected int) string {
 	nav := strings.Join(navParts, " | ")
 
 	return m.Theme.Base().
-		Width(60).
+		Width(m.navWidth).
 		Align(lipgloss.Right).
 		Render(nav)
 }

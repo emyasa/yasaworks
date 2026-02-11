@@ -14,45 +14,53 @@ import (
 
 type Model struct {
 	Theme theme.Theme
+	ContainerWidth int
+
 	menuWidth int
 	contentWidth int
+	navWidth int
 	selected int
 }
 
 type blogEntry struct {
 	name string
+	mdPath string
 	viewport *viewport.Model
 }
 
 //go:embed entries/*.md
 var entriesFS embed.FS
 var blogEntries = []blogEntry{
-	{name: "First Entry"},
+	{name: "First Entry", mdPath: "entries/first.md"},
 }
 
-func NewModel(theme theme.Theme) Model {
+func NewModel(theme theme.Theme, containerWidth int) Model {
 	menuWidth := maxEntryWidth(blogEntries)
-	contentWidth := 80 - menuWidth
+	contentWidth := containerWidth - menuWidth
+	navWidth := contentWidth - 8 
 
 	r, _ := glamour.NewTermRenderer(
 	glamour.WithAutoStyle(),
 	glamour.WithWordWrap(contentWidth))
 
-	firstEntryContent, err := entriesFS.ReadFile("entries/first.md")
-	if err != nil {
-		panic(err)
+	for _, entry := range blogEntries {
+		content, err := entriesFS.ReadFile(entry.mdPath)
+		if err != nil {
+			panic(err)
+		}
+
+		detailContent, _ := r.Render(string(content))
+		vp := viewport.New(contentWidth, 10)
+		vp.SetContent(detailContent)
+
+		blogEntries[0].viewport = &vp
 	}
-
-	detailContent, _ := r.Render(string(firstEntryContent))
-	vp := viewport.New(contentWidth, 10)
-	vp.SetContent(detailContent)
-
-	blogEntries[0].viewport = &vp
 	
 	return Model{
 		Theme: theme,
 		menuWidth: menuWidth,
 		contentWidth: contentWidth,
+		navWidth: navWidth,
 	}
 }
 
