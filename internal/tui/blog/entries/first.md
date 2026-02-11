@@ -1,4 +1,4 @@
-# Hello World
+Hello World
 This is a simple example of Markdown rendering with Glamour! Scroll down to see more.
 
 - Item 1

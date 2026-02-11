@@ -2,8 +2,6 @@
 package tui
 
 import (
-	"math"
-
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 
@@ -32,12 +30,16 @@ type model struct {
 
 func NewModel() (tea.Model, error) {
 	basicTheme := theme.BasicTheme()
+	widthContainer := 80
+	heightContainer := 30
 
 	return model{
 		theme: basicTheme,
 		splash: splash.Model{ Theme: basicTheme },
-		blog: blog.NewModel(basicTheme, 80),
+		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		page: splashPage,
+		widthContainer: widthContainer,
+		heightContainer: heightContainer,
 	}, nil
 }
 
@@ -55,8 +57,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.viewportWidth = msg.Width
 		m.viewportHeight = msg.Height
-		m.widthContainer = 80
-		m.heightContainer = int(math.Min(float64(msg.Height), 30))
 	case splash.SplashCompleteMsg:
 		m.page = blogPage
 	}

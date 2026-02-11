@@ -15,6 +15,7 @@ import (
 type Model struct {
 	Theme theme.Theme
 	ContainerWidth int
+	ContainerHeight int
 
 	menuWidth int
 	contentWidth int
@@ -35,14 +36,12 @@ var blogEntries = []blogEntry{
 	{name: "Second Entry", mdPath: "entries/first.md"},
 }
 
-func NewModel(theme theme.Theme, containerWidth int) Model {
-	menuWidth := maxEntryWidth(blogEntries)
+func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model {
+	menuWidth := maxEntryWidth(blogEntries) + 6
 	contentWidth := containerWidth - menuWidth
-	navWidth := contentWidth - 8 
+	navWidth := contentWidth - 6 
 
-	r, _ := glamour.NewTermRenderer(
-	glamour.WithAutoStyle(),
-	glamour.WithWordWrap(contentWidth))
+	r, _ := glamour.NewTermRenderer(glamour.WithWordWrap(contentWidth))
 
 	for i, entry := range blogEntries {
 		content, err := entriesFS.ReadFile(entry.mdPath)
@@ -51,7 +50,7 @@ func NewModel(theme theme.Theme, containerWidth int) Model {
 		}
 
 		detailContent, _ := r.Render(string(content))
-		vp := viewport.New(contentWidth, 10)
+		vp := viewport.New(contentWidth, containerHeight - 10)
 		vp.SetContent(detailContent)
 
 		blogEntries[i].viewport = &vp
@@ -145,7 +144,9 @@ func (m Model) renderBlogDetail(entries []blogEntry, selected int) string {
 		m.navView(entries, selected),
 	)
 
-	return m.Theme.Base().Render(content)
+	return m.Theme.Base().
+		MarginTop(1).
+		Render(content)
 }
 
 func maxEntryWidth(entries []blogEntry) int {
