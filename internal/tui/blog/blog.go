@@ -36,12 +36,17 @@ var blogEntries = []blogEntry{
 	{name: "Second Entry", mdPath: "entries/first.md"},
 }
 
+//go:embed styles/dark.json
+var darkStyle []byte
+
 func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model {
 	menuWidth := maxEntryWidth(blogEntries) + 6
 	contentWidth := containerWidth - menuWidth
 	navWidth := contentWidth - 6 
 
-	r, _ := glamour.NewTermRenderer(glamour.WithWordWrap(contentWidth))
+	r, _ := glamour.NewTermRenderer(
+		glamour.WithStylesFromJSONBytes(darkStyle),
+		glamour.WithWordWrap(contentWidth))
 
 	for i, entry := range blogEntries {
 		content, err := entriesFS.ReadFile(entry.mdPath)

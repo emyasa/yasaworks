@@ -1,26 +1,35 @@
-Hello World
-This is a simple example of Markdown rendering with Glamour! Scroll down to see more.
+# Glamour Test
 
-- Item 1
-- Item 2
-- Item 3
-- Item 4
-- Item 5
-- Item 6
-- Item 7
-- Item 1
-- Item 2
-- Item 3
-- Item 4
-- Item 5
-- Item 6
-- Item 7
-- Item 1
-- Item 2
-- Item 3
-- Item 4
-- Item 5
-- Item 6
-- Item 7
+This is a **bold** paragraph with some *italic* text.
 
-Bye!
+- List item 1
+- List item 2
+- List item 3
+
+> This is a blockquote with some style.
+
+Here’s some inline `code`.
+
+```
+func main() {
+    fmt.Println(“Hello World”)
+}
+```
+# Glamour Test
+
+This is a **bold** paragraph with some *italic* text.
+
+- List item 1
+- List item 2
+- List item 3
+
+> This is a blockquote with some style.
+
+Here’s some inline `code`.
+
+```
+func main() {
+    fmt.Println(“Hello World”)
+}
+```
+
