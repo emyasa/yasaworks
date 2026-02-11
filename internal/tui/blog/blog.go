@@ -32,6 +32,7 @@ type blogEntry struct {
 var entriesFS embed.FS
 var blogEntries = []blogEntry{
 	{name: "First Entry", mdPath: "entries/first.md"},
+	{name: "Second Entry", mdPath: "entries/first.md"},
 }
 
 func NewModel(theme theme.Theme, containerWidth int) Model {
@@ -43,7 +44,7 @@ func NewModel(theme theme.Theme, containerWidth int) Model {
 	glamour.WithAutoStyle(),
 	glamour.WithWordWrap(contentWidth))
 
-	for _, entry := range blogEntries {
+	for i, entry := range blogEntries {
 		content, err := entriesFS.ReadFile(entry.mdPath)
 		if err != nil {
 			panic(err)
@@ -53,7 +54,7 @@ func NewModel(theme theme.Theme, containerWidth int) Model {
 		vp := viewport.New(contentWidth, 10)
 		vp.SetContent(detailContent)
 
-		blogEntries[0].viewport = &vp
+		blogEntries[i].viewport = &vp
 	}
 	
 	return Model{
