@@ -124,23 +124,14 @@ func (m Model) renderBlogMenu(entries []blogEntry, selected int) string {
 }
 
 func (m Model) renderBlogDetail(entries []blogEntry, selected int) string {
-	vp := entries[selected].viewport
-	var navParts []string
-	if vp.YOffset > 0 {
-		navParts = append(navParts, "<< N prev")
-	}
-
-	if vp.YOffset+vp.Height < vp.TotalLineCount() {
-		navParts = append(navParts, "n next >>")
-	}
-
-	nav := strings.Join(navParts, " | ")
+	nav := m.navView(entries, selected)
 	containerWidth := 80 - m.menuWidth
 
 	navStyle := m.Theme.Base().
 		Width(45).
 		Align(lipgloss.Right)
 
+	vp := entries[selected].viewport
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
 		vp.View(),
