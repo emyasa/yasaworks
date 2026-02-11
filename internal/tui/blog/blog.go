@@ -25,12 +25,17 @@ type blogEntry struct {
 
 //go:embed entries/*.md
 var entriesFS embed.FS
-var blogEntries = []blogEntry{}
+var blogEntries = []blogEntry{
+	{name: "First Entry"},
+}
 
 func (m Model) Init() tea.Cmd {
+	m.menuWidth = maxEntryWidth(blogEntries)
+	contentWidth := 80 - m.menuWidth
+
 	r, _ := glamour.NewTermRenderer(
 	glamour.WithAutoStyle(),
-	glamour.WithWordWrap(50))
+	glamour.WithWordWrap(contentWidth))
 
 	firstEntryContent, err := entriesFS.ReadFile("entries/first.md")
 	if err != nil {
@@ -38,13 +43,10 @@ func (m Model) Init() tea.Cmd {
 	}
 
 	detailContent, _ := r.Render(string(firstEntryContent))
-	vp := viewport.New(50, 10)
+	vp := viewport.New(contentWidth, 10)
 	vp.SetContent(detailContent)
 
-	blogEntries = append(blogEntries, blogEntry{
-		name: "First Entry",
-		viewport: &vp,
-	})
+	blogEntries[0].viewport = &vp
 	
 	return nil
 }
@@ -70,7 +72,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			vp.ScrollDown(10)
 
 			return m, nil
-		case "p":
+		case "N":
 			vp := blogEntries[m.selected].viewport
 			vp.ScrollUp(10)
 
@@ -125,7 +127,7 @@ func (m Model) renderBlogDetail(entries []blogEntry, selected int) string {
 	vp := entries[selected].viewport
 	var navParts []string
 	if vp.YOffset > 0 {
-		navParts = append(navParts, "<< p prev")
+		navParts = append(navParts, "<< N prev")
 	}
 
 	if vp.YOffset+vp.Height < vp.TotalLineCount() {
