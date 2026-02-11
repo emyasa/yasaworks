@@ -36,13 +36,13 @@ func NewModel() (tea.Model, error) {
 	return model{
 		theme: basicTheme,
 		splash: splash.Model{ Theme: basicTheme },
-		blog: blog.Model{ Theme: basicTheme },
+		blog: blog.NewModel(basicTheme),
 		page: splashPage,
 	}, nil
 }
 
 func (m model) Init() tea.Cmd {
-	return tea.Batch(m.splash.Init(), m.blog.Init())
+	return tea.Batch(m.splash.Init())
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

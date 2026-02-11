@@ -1,6 +1,10 @@
 package blog
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 func (m Model) navView(entries []blogEntry, selected int) string {
 	accent := m.Theme.TextAccent().Render
@@ -10,7 +14,7 @@ func (m Model) navView(entries []blogEntry, selected int) string {
 
 	vp := entries[selected].viewport
 	if vp.YOffset > 0 {
-		prevNav := base("<<") + accent("N") + base(" prev")
+		prevNav := base("<< ") + accent("N") + base(" prev")
 		navParts = append(navParts, prevNav)
 	}
 
@@ -19,6 +23,11 @@ func (m Model) navView(entries []blogEntry, selected int) string {
 		navParts = append(navParts, nextNav)
 	}
 
-	return strings.Join(navParts, " | ")
+	nav := strings.Join(navParts, " | ")
+
+	return m.Theme.Base().
+		Width(60).
+		Align(lipgloss.Right).
+		Render(nav)
 }
 

@@ -15,6 +15,7 @@ import (
 type Model struct {
 	Theme theme.Theme
 	menuWidth int
+	contentWidth int
 	selected int
 }
 
@@ -29,9 +30,9 @@ var blogEntries = []blogEntry{
 	{name: "First Entry"},
 }
 
-func (m Model) Init() tea.Cmd {
-	m.menuWidth = maxEntryWidth(blogEntries)
-	contentWidth := 80 - m.menuWidth
+func NewModel(theme theme.Theme) Model {
+	menuWidth := maxEntryWidth(blogEntries)
+	contentWidth := 80 - menuWidth
 
 	r, _ := glamour.NewTermRenderer(
 	glamour.WithAutoStyle(),
@@ -48,7 +49,11 @@ func (m Model) Init() tea.Cmd {
 
 	blogEntries[0].viewport = &vp
 	
-	return nil
+	return Model{
+		Theme: theme,
+		menuWidth: menuWidth,
+		contentWidth: contentWidth,
+	}
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
@@ -124,26 +129,14 @@ func (m Model) renderBlogMenu(entries []blogEntry, selected int) string {
 }
 
 func (m Model) renderBlogDetail(entries []blogEntry, selected int) string {
-	nav := m.navView(entries, selected)
-	containerWidth := 80 - m.menuWidth
-
-	navStyle := m.Theme.Base().
-		Width(45).
-		Align(lipgloss.Right)
-
 	vp := entries[selected].viewport
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
 		vp.View(),
-		navStyle.Render(nav),
+		m.navView(entries, selected),
 	)
 
-	containerStyle := m.Theme.Base().
-		Width(containerWidth).
-		MarginTop(1).
-		Padding(0, 1)
-
-	return containerStyle.Render(content)
+	return m.Theme.Base().Render(content)
 }
 
 func maxEntryWidth(entries []blogEntry) int {
