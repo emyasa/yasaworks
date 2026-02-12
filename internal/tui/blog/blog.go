@@ -19,6 +19,7 @@ type Model struct {
 
 	menuWidth int
 	contentWidth int
+	contentViewportHeight int
 	navWidth int
 	selected int
 }
@@ -43,6 +44,7 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 	menuWidth := maxEntryWidth(blogEntries) + 6
 	contentWidth := containerWidth - menuWidth
 	navWidth := contentWidth - 6 
+	contentViewportHeight := containerHeight - 10
 
 	r, _ := glamour.NewTermRenderer(
 		glamour.WithStylesFromJSONBytes(darkStyle),
@@ -55,7 +57,7 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 		}
 
 		detailContent, _ := r.Render(string(content))
-		vp := viewport.New(contentWidth, containerHeight - 10)
+		vp := viewport.New(contentWidth, contentViewportHeight)
 		vp.SetContent(detailContent)
 
 		blogEntries[i].viewport = &vp
@@ -65,6 +67,7 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 		Theme: theme,
 		menuWidth: menuWidth,
 		contentWidth: contentWidth,
+		contentViewportHeight: contentViewportHeight,
 		navWidth: navWidth,
 	}
 }
@@ -87,12 +90,12 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			return m, nil
 		case "n":
 			vp := blogEntries[m.selected].viewport
-			vp.ScrollDown(10)
+			vp.ScrollDown(m.contentViewportHeight)
 
 			return m, nil
 		case "N":
 			vp := blogEntries[m.selected].viewport
-			vp.ScrollUp(10)
+			vp.ScrollUp(m.contentViewportHeight)
 
 			return m, nil
 		}
