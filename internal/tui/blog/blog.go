@@ -33,8 +33,7 @@ type blogEntry struct {
 //go:embed entries/*.md
 var entriesFS embed.FS
 var blogEntries = []blogEntry{
-	{name: "First Entry", mdPath: "entries/first.md"},
-	{name: "Second Entry", mdPath: "entries/first.md"},
+	{name: "Dev Workflow 2026", mdPath: "entries/dev-workflow-2026.md"},
 }
 
 //go:embed styles/dark.json
@@ -149,6 +148,7 @@ func (m Model) renderBlogDetail(entries []blogEntry, selected int) string {
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
 		vp.View(),
+		" ",
 		m.navView(entries, selected),
 	)
 
