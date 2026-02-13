@@ -31,7 +31,7 @@ I thought it was gonna be different, but no. I was still missing a lot and it tu
 - **telescope** for fuzzy search
 - **JDTLS** setup and configured LSP keymaps (this took longer than I'd want to.)
 
-At that point, I could at least get by—but it still wasn’t quite there. So I kept going.
+At that point, I could at least get by, but it still wasn’t quite there. So I kept going.
 
 Over the next two weeks:
 - Moved from neo-tree to nvim-tree
