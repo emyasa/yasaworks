@@ -33,7 +33,7 @@ type blogEntry struct {
 //go:embed entries/*.md
 var entriesFS embed.FS
 var blogEntries = []blogEntry{
-	{name: "Dev Workflow 2026", mdPath: "entries/dev-workflow-2026.md"},
+	{name: "Dev Workflow", mdPath: "entries/dev-workflow.md"},
 }
 
 //go:embed styles/dark.json
