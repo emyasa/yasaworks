@@ -36,6 +36,7 @@ At that point, I could at least get by, but it still wasn’t quite there. So I 
 Over the next two weeks:
 - Moved from neo-tree to nvim-tree
 - Then had an internal debate about file trees altogether
+
 Part of me tried to rationalize the need for them. Another part saw how deep nesting is often just noise. Initially, I told myself I needed file trees to build a better mental model of the project structure. But to be sure, I observed myself again.
 
 Oddly enough, I noticed I had a tendency to open and stare at the file tree whenever I was thinking through a problem.
