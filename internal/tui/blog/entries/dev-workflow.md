@@ -40,11 +40,11 @@ Part of me tried to rationalize the need for them. Another part saw how deep nes
 
 Oddly enough, I noticed I had a tendency to open and stare at the file tree whenever I was thinking through a problem.
 
-There’s nothing inherently wrong with that. In fact, I realized it subconsciously helped me build a mental map of related components. But I wanted a more intentional way of coding—focusing on the relevant code that needed solving, and using a flatter file explorer only when necessary.
+There’s nothing inherently wrong with that. In fact, I realized it subconsciously helped me build a mental map of related components. But I wanted a more intentional way of coding, focusing on the relevant code that needed solving, and using a flatter file explorer only when necessary.
 
 So I moved from Nvim-tree to oil.nvim.
 
-Then came another internal debate. JDTLS’s code action for moving a type to another package felt counterproductive. I came up with a hacky idea I was willing to settle for—minimal repackaging support. So I forked oil.nvim, implemented an adjustment that exports the file rename event, and leveraged it to update the package name (and dependencies when needed) whenever a type is moved.
+Then came another internal debate. JDTLS’s code action for moving a type to another package felt counterproductive. I came up with a hacky idea I was willing to settle for, minimal repackaging support. So I forked oil.nvim, implemented an adjustment that exports the file rename event, and leveraged it to update the package name (and dependencies when needed) whenever a type is moved.
 
 At this point, with no file tree and no tabs, the need to cycle through specific files surfaced. That’s when I looked into Harpoon.
 
