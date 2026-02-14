@@ -6,19 +6,19 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-func (m Model) navView(entries []blogEntry, selected int) string {
+func (m Model) navView(entries []*blogEntry, selected int) string {
 	accent := m.Theme.TextAccent().Render
 	base := m.Theme.Base().Render
 
 	var navParts []string
 
-	vp := entries[selected].viewport
-	if vp.YOffset > 0 {
+	blogEntry := entries[selected]
+	if blogEntry.pageIndex > 0 {
 		prevNav := base("<< ") + accent("N") + base(" prev")
 		navParts = append(navParts, prevNav)
 	}
 
-	if vp.YOffset + vp.Height < vp.TotalLineCount() {
+	if blogEntry.pageIndex < blogEntry.totalPages(m.contentHeight) - 1 {
 		nextNav := accent("n") + base(" next >>")
 		navParts = append(navParts, nextNav)
 	}

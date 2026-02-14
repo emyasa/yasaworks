@@ -5,7 +5,6 @@ import (
 	"embed"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
@@ -19,7 +18,7 @@ type Model struct {
 
 	menuWidth int
 	contentWidth int
-	contentViewportHeight int
+	contentHeight int
 	navWidth int
 	selected int
 }
@@ -27,12 +26,30 @@ type Model struct {
 type blogEntry struct {
 	name string
 	mdPath string
-	viewport *viewport.Model
+	content string
+	lines []string
+	pageIndex int
+}
+
+func (b blogEntry) totalPages(pageHeight int) int {
+	totalLines := len(b.lines)
+	return (totalLines + pageHeight - 1) / pageHeight
+}
+
+func (b blogEntry) visibleContent(pageHeight int) string {
+	start := b.pageIndex * pageHeight
+	end := start + pageHeight
+
+	if end > len(b.lines) {
+		end = len(b.lines)
+	}
+
+	return strings.Join(b.lines[start:end], "\n")
 }
 
 //go:embed entries/*.md
 var entriesFS embed.FS
-var blogEntries = []blogEntry{
+var blogEntries = []*blogEntry{
 	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md"},
 }
 
@@ -43,7 +60,7 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 	menuWidth := maxEntryWidth(blogEntries) + 6
 	contentWidth := containerWidth - menuWidth
 	navWidth := contentWidth - 6 
-	contentViewportHeight := containerHeight - 10
+	pageHeight := containerHeight - 10
 
 	r, _ := glamour.NewTermRenderer(
 		glamour.WithStylesFromJSONBytes(darkStyle),
@@ -56,17 +73,15 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 		}
 
 		detailContent, _ := r.Render(string(content))
-		vp := viewport.New(contentWidth, contentViewportHeight)
-		vp.SetContent(detailContent)
-
-		blogEntries[i].viewport = &vp
+		blogEntries[i].content = detailContent
+		blogEntries[i].lines = strings.Split(detailContent, "\n")
 	}
 	
 	return Model{
 		Theme: theme,
 		menuWidth: menuWidth,
 		contentWidth: contentWidth,
-		contentViewportHeight: contentViewportHeight,
+		contentHeight: pageHeight,
 		navWidth: navWidth,
 	}
 }
@@ -88,13 +103,17 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			
 			return m, nil
 		case "n":
-			vp := blogEntries[m.selected].viewport
-			vp.ScrollDown(m.contentViewportHeight)
+			blogEntry := blogEntries[m.selected]
+			if blogEntry.pageIndex < blogEntry.totalPages(m.contentHeight) - 1 {
+				blogEntry.pageIndex++
+			}
 
 			return m, nil
 		case "N":
-			vp := blogEntries[m.selected].viewport
-			vp.ScrollUp(m.contentViewportHeight)
+			blogEntry := blogEntries[m.selected]
+			if blogEntry.pageIndex > 0 {
+				blogEntry.pageIndex--
+			}
 
 			return m, nil
 		}
@@ -115,7 +134,7 @@ func (m Model) View() string {
 	)
 }
 
-func (m Model) renderBlogMenu(entries []blogEntry, selected int) string {
+func (m Model) renderBlogMenu(entries []*blogEntry, selected int) string {
 	m.menuWidth = maxEntryWidth(entries)
 
 	var sb strings.Builder
@@ -143,11 +162,11 @@ func (m Model) renderBlogMenu(entries []blogEntry, selected int) string {
 	return containerStyle.Render(sb.String())
 }
 
-func (m Model) renderBlogDetail(entries []blogEntry, selected int) string {
-	vp := entries[selected].viewport
+func (m Model) renderBlogDetail(entries []*blogEntry, selected int) string {
+	entryVisibleContent := entries[selected].visibleContent(m.contentHeight)
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
-		vp.View(),
+		entryVisibleContent,
 		" ",
 		m.navView(entries, selected),
 	)
@@ -157,7 +176,7 @@ func (m Model) renderBlogDetail(entries []blogEntry, selected int) string {
 		Render(content)
 }
 
-func maxEntryWidth(entries []blogEntry) int {
+func maxEntryWidth(entries []*blogEntry) int {
 	max := 0
 	for _, e := range entries {
 		if w := lipgloss.Width(e.name); w > max {
