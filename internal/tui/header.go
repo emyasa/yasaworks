@@ -1,9 +1,22 @@
 package tui
 
 import (
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
 )
+
+func (m *model) headerUpdate(msg tea.Msg) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "l":
+			m.page = blogPage
+		case "m":
+			m.page = termsPage
+		}
+	}
+}
 
 func (m model) headerView() string {
 	bold := m.theme.TextAccent().Bold(true).Render
@@ -12,14 +25,14 @@ func (m model) headerView() string {
 
 	logo := bold("yasaworks")
 	blog := accent("l") + base(" logs")
-	terms := accent("i") + base(" interface")
+	terms := accent("m") + base(" man interface")
 	contact := accent("c") + base(" contact")
 
 	switch m.page {
 	case blogPage:
 		blog = accent("l logs")
 	case termsPage:
-		terms = accent("i interface")
+		terms = accent("m man interface")
 	}
 
 	tabs := []string{

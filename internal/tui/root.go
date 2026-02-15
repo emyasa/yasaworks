@@ -52,10 +52,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "l":
-			m.page = blogPage
-		case "i":
-			m.page = termsPage
 		case "q":
 			return m, tea.Quit
 		}
@@ -66,6 +62,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.page = blogPage
 	}
 
+	m.headerUpdate(msg)
 	switch m.page {
 	case splashPage:
 		var cmd tea.Cmd
