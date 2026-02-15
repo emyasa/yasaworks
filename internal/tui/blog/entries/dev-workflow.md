@@ -51,7 +51,7 @@ At this point, with no file tree and no tabs, the need to cycle through specific
 
 After that, I started experimenting with modern terminal emulators. I switched from iTerm2 to Ghostty. Then I automated app launching with specific window dimensions using hotkeys, Raycast and AppleScript did the trick. Since the terminal is one of those apps, I included a tmux attach-session command in the AppleScript, effectively making Ghostty a session-aware terminal-based dev environment.
 
-Then I discovered Git Worktrees, which further improved my quality of life.
+Then, I discovered a few more that significantly improved my quality of life: **Git worktrees**, **fzf**, and more.
 
 I’m not a fan of multitasking, and never will be. I firmly believe that, at our core, we do things one at a time. Even with this setup in place, that remains true for me.
 
