@@ -11,14 +11,21 @@ func (m model) headerView() string {
 	base := m.theme.Base().Render
 
 	logo := bold("yasaworks")
-	blog := bold("l") + accent(" logs")
-	rtfwm := accent("i") + base(" interface")
+	blog := accent("l") + base(" logs")
+	terms := accent("i") + base(" interface")
 	contact := accent("c") + base(" contact")
+
+	switch m.page {
+	case blogPage:
+		blog = accent("l logs")
+	case termsPage:
+		terms = accent("i interface")
+	}
 
 	tabs := []string{
 		logo,
 		blog,
-		rtfwm,
+		terms,
 		contact,
 	}
 
