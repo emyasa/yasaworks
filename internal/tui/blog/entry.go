@@ -66,21 +66,6 @@ func (b blogEntry) visibleContent(pageHeight int) string {
 	return strings.Join(b.lines[start:end], "\n")
 }
 
-func (m Model) entryView() string {
-	entry := blogEntries[m.selectedEntryIndex]
-	entryVisibleContent := entry.visibleContent(m.entryHeight)
-	content := lipgloss.JoinVertical(
-		lipgloss.Top,
-		entryVisibleContent,
-		" ",
-		m.navView(),
-	)
-
-	return m.Theme.Base().
-		MarginTop(1).
-		Render(content)
-}
-
 func (m *Model) getNextEntry() {
 	if m.selectedEntryIndex < len(blogEntries) - 1 {
 		m.selectedEntryIndex += 1
@@ -105,5 +90,20 @@ func (m Model) entryPrevPage() {
 	if entry.pageIndex > 0 {
 		entry.pageIndex--
 	}
+}
+
+func (m Model) entryView() string {
+	entry := blogEntries[m.selectedEntryIndex]
+	entryVisibleContent := entry.visibleContent(m.entryHeight)
+	content := lipgloss.JoinVertical(
+		lipgloss.Top,
+		entryVisibleContent,
+		" ",
+		m.navView(),
+	)
+
+	return m.Theme.Base().
+		MarginTop(1).
+		Render(content)
 }
 
