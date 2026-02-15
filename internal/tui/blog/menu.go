@@ -2,7 +2,7 @@ package blog
 
 import "strings"
 
-func (m Model) renderBlogMenu() string {
+func (m Model) menuView() string {
 	entries := m.blogEntries
 	selected := m.selected
 

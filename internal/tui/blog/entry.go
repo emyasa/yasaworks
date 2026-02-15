@@ -38,16 +38,14 @@ func (b blogEntry) visibleContent(pageHeight int) string {
 	return strings.Join(b.lines[start:end], "\n")
 }
 
-func (m Model) renderBlogDetail() string {
-	entries := m.blogEntries
-	selected := m.selected
-
-	entryVisibleContent := entries[selected].visibleContent(m.contentHeight)
+func (m Model) entryView() string {
+	entry := m.blogEntries[m.selected]
+	entryVisibleContent := entry.visibleContent(m.contentHeight)
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
 		entryVisibleContent,
 		" ",
-		m.navView(entries, selected),
+		m.navView(),
 	)
 
 	return m.Theme.Base().

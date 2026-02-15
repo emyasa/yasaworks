@@ -102,8 +102,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	menuContent := m.renderBlogMenu()
-	detailContent := m.renderBlogDetail()
+	menuContent := m.menuView()
+	detailContent := m.entryView()
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Top,
