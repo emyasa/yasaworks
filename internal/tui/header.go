@@ -26,7 +26,7 @@ func (m model) headerView() string {
 	logo := bold("yasaworks")
 	blog := accent("l") + base(" logs")
 	terms := accent("m") + base(" man interface")
-	contact := accent("c") + base(" contact")
+	contact := accent("p") + base(" ping")
 
 	switch m.page {
 	case blogPage:
