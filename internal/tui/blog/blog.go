@@ -20,6 +20,8 @@ type Model struct {
 	contentWidth int
 	contentHeight int
 	navWidth int
+
+	blogEntries []*blogEntry
 	selected int
 }
 
@@ -59,6 +61,7 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 		contentWidth: contentWidth,
 		contentHeight: pageHeight,
 		navWidth: navWidth,
+		blogEntries: blogEntries,
 	}
 }
 
@@ -79,14 +82,14 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			
 			return m, nil
 		case "n":
-			blogEntry := blogEntries[m.selected]
+			blogEntry := m.blogEntries[m.selected]
 			if blogEntry.pageIndex < blogEntry.totalPages(m.contentHeight) - 1 {
 				blogEntry.pageIndex++
 			}
 
 			return m, nil
 		case "N":
-			blogEntry := blogEntries[m.selected]
+			blogEntry := m.blogEntries[m.selected]
 			if blogEntry.pageIndex > 0 {
 				blogEntry.pageIndex--
 			}
@@ -99,8 +102,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	menuContent := m.renderBlogMenu(blogEntries, m.selected)
-	detailContent := m.renderBlogDetail(blogEntries, m.selected)
+	menuContent := m.renderBlogMenu()
+	detailContent := m.renderBlogDetail()
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Top,
@@ -108,47 +111,5 @@ func (m Model) View() string {
 		"  ",
 		detailContent,
 	)
-}
-
-func (m Model) renderBlogMenu(entries []*blogEntry, selected int) string {
-	m.menuWidth = maxEntryWidth(entries)
-
-	var sb strings.Builder
-	for i, e := range entries {
-		menuItemStyle := m.Theme.Base().
-			Width(m.menuWidth + 2).
-			Padding(0, 1)
-
-		if i == selected {
-			menuItemStyle = menuItemStyle.Background(m.Theme.Highlight()).
-				Foreground(m.Theme.Accent()).
-				Bold(true)
-		}
-
-		sb.WriteString(menuItemStyle.Render(e.name))
-		if i < len(entries) - 1 {
-			sb.WriteString("\n")
-		}
-	}
-
-	containerStyle := m.Theme.Base().
-		MarginTop(1).
-		Padding(0, 1)
-
-	return containerStyle.Render(sb.String())
-}
-
-func (m Model) renderBlogDetail(entries []*blogEntry, selected int) string {
-	entryVisibleContent := entries[selected].visibleContent(m.contentHeight)
-	content := lipgloss.JoinVertical(
-		lipgloss.Top,
-		entryVisibleContent,
-		" ",
-		m.navView(entries, selected),
-	)
-
-	return m.Theme.Base().
-		MarginTop(1).
-		Render(content)
 }
 
