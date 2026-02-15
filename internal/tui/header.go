@@ -11,8 +11,8 @@ func (m model) headerView() string {
 	base := m.theme.Base().Render
 
 	logo := bold("yasaworks")
-	blog := bold("b") + accent(" blog")
-	rtfwm := accent("r") + base(" TFWM")
+	blog := bold("l") + accent(" logs")
+	rtfwm := accent("i") + base(" interface")
 	contact := accent("c") + base(" contact")
 
 	tabs := []string{
