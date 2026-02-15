@@ -4,9 +4,9 @@ import "strings"
 
 func (m Model) menuView() string {
 	entries := m.blogEntries
-	selected := m.selected
+	selected := m.selectedEntryIndex
 
-	m.menuWidth = maxEntryWidth(entries)
+	m.menuWidth = maxEntryWidth()
 
 	var sb strings.Builder
 	for i, e := range entries {

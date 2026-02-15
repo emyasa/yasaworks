@@ -2,7 +2,6 @@
 package blog
 
 import (
-	"embed"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -22,20 +21,11 @@ type Model struct {
 	navWidth int
 
 	blogEntries []*blogEntry
-	selected int
+	selectedEntryIndex int
 }
-
-//go:embed entries/*.md
-var entriesFS embed.FS
-var blogEntries = []*blogEntry{
-	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md"},
-}
-
-//go:embed styles/dark.json
-var darkStyle []byte
 
 func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model {
-	menuWidth := maxEntryWidth(blogEntries) + 6
+	menuWidth := maxEntryWidth() + 6
 	contentWidth := containerWidth - menuWidth
 	navWidth := contentWidth - 6 
 	pageHeight := containerHeight - 10
@@ -70,15 +60,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "tab", "j", "down":
-			if m.selected < len(blogEntries) - 1 {
-				m.selected += 1
-			}
+			m.getNextEntry()
 
 			return m, nil
 		case "shift+tab", "k", "up":
-			if m.selected > 0 {
-				m.selected -= 1
-			}
+			m.getPrevEntry()
 			
 			return m, nil
 		case "n":

@@ -1,6 +1,7 @@
 package blog
 
 import (
+	"embed"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -14,9 +15,18 @@ type blogEntry struct {
 	pageIndex int
 }
 
-func maxEntryWidth(entries []*blogEntry) int {
+//go:embed entries/*.md
+var entriesFS embed.FS
+var blogEntries = []*blogEntry{
+	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md"},
+}
+
+//go:embed styles/dark.json
+var darkStyle []byte
+
+func maxEntryWidth() int {
 	max := 0
-	for _, e := range entries {
+	for _, e := range blogEntries {
 		if w := lipgloss.Width(e.name); w > max {
 			max = w
 		}
@@ -39,7 +49,7 @@ func (b blogEntry) visibleContent(pageHeight int) string {
 }
 
 func (m Model) entryView() string {
-	entry := m.blogEntries[m.selected]
+	entry := m.blogEntries[m.selectedEntryIndex]
 	entryVisibleContent := entry.visibleContent(m.contentHeight)
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
@@ -53,15 +63,27 @@ func (m Model) entryView() string {
 		Render(content)
 }
 
+func (m *Model) getNextEntry() {
+	if m.selectedEntryIndex < len(blogEntries) - 1 {
+		m.selectedEntryIndex += 1
+	}
+}
+
+func (m *Model) getPrevEntry() {
+	if m.selectedEntryIndex > 0 {
+		m.selectedEntryIndex -= 1
+	}
+}
+
 func (m Model) entryNextPage() {
-	entry := m.blogEntries[m.selected]
+	entry := m.blogEntries[m.selectedEntryIndex]
 	if entry.pageIndex < entry.totalPages(m.contentHeight) - 1 {
 		entry.pageIndex++
 	}
 }
 
 func (m Model) entryPrevPage() {
-	entry := m.blogEntries[m.selected]
+	entry := m.blogEntries[m.selectedEntryIndex]
 	if entry.pageIndex > 0 {
 		entry.pageIndex--
 	}
