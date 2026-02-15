@@ -2,10 +2,7 @@
 package blog
 
 import (
-	"strings"
-
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
@@ -20,7 +17,6 @@ type Model struct {
 	entryHeight int
 	navWidth int
 
-	blogEntries []*blogEntry
 	selectedEntryIndex int
 }
 
@@ -30,20 +26,7 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 	entryHeight := containerHeight - 10
 	navWidth := entryWidth - 6 
 
-	r, _ := glamour.NewTermRenderer(
-		glamour.WithStylesFromJSONBytes(darkStyle),
-		glamour.WithWordWrap(entryWidth))
-
-	for i, entry := range blogEntries {
-		content, err := entriesFS.ReadFile(entry.mdPath)
-		if err != nil {
-			panic(err)
-		}
-
-		detailContent, _ := r.Render(string(content))
-		blogEntries[i].content = detailContent
-		blogEntries[i].lines = strings.Split(detailContent, "\n")
-	}
+	setupEntries(entryWidth)
 	
 	return Model{
 		Theme: theme,
@@ -51,7 +34,6 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 		entryWidth: entryWidth,
 		entryHeight: entryHeight,
 		navWidth: navWidth,
-		blogEntries: blogEntries,
 	}
 }
 

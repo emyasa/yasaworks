@@ -4,6 +4,7 @@ import (
 	"embed"
 	"strings"
 
+	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
 )
 
@@ -23,6 +24,23 @@ var blogEntries = []*blogEntry{
 
 //go:embed styles/dark.json
 var darkStyle []byte
+
+func setupEntries(entryWidth int) {
+	r, _ := glamour.NewTermRenderer(
+		glamour.WithStylesFromJSONBytes(darkStyle),
+		glamour.WithWordWrap(entryWidth))
+
+	for i, entry := range blogEntries {
+		content, err := entriesFS.ReadFile(entry.mdPath)
+		if err != nil {
+			panic(err)
+		}
+
+		detailContent, _ := r.Render(string(content))
+		blogEntries[i].content = detailContent
+		blogEntries[i].lines = strings.Split(detailContent, "\n")
+	}
+}
 
 func maxEntryWidth() int {
 	max := 0
