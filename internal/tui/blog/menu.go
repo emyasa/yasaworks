@@ -6,12 +6,10 @@ func (m Model) menuView() string {
 	entries := m.blogEntries
 	selected := m.selectedEntryIndex
 
-	menuWidth := maxEntryWidth()
-
 	var sb strings.Builder
 	for i, e := range entries {
 		menuItemStyle := m.Theme.Base().
-			Width(menuWidth + 2).
+			Width(m.menuWidth + 2).
 			Padding(0, 1)
 
 		if i == selected {

@@ -16,8 +16,8 @@ type Model struct {
 	ContainerHeight int
 
 	menuWidth int
-	contentWidth int
-	contentHeight int
+	entryWidth int
+	entryHeight int
 	navWidth int
 
 	blogEntries []*blogEntry
@@ -25,14 +25,14 @@ type Model struct {
 }
 
 func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model {
-	menuWidth := maxEntryWidth() + 6
-	contentWidth := containerWidth - menuWidth
-	navWidth := contentWidth - 6 
-	pageHeight := containerHeight - 10
+	menuWidth := maxEntryWidth()
+	entryWidth := containerWidth - (menuWidth + 6)
+	entryHeight := containerHeight - 10
+	navWidth := entryWidth - 6 
 
 	r, _ := glamour.NewTermRenderer(
 		glamour.WithStylesFromJSONBytes(darkStyle),
-		glamour.WithWordWrap(contentWidth))
+		glamour.WithWordWrap(entryWidth))
 
 	for i, entry := range blogEntries {
 		content, err := entriesFS.ReadFile(entry.mdPath)
@@ -48,8 +48,8 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 	return Model{
 		Theme: theme,
 		menuWidth: menuWidth,
-		contentWidth: contentWidth,
-		contentHeight: pageHeight,
+		entryWidth: entryWidth,
+		entryHeight: entryHeight,
 		navWidth: navWidth,
 		blogEntries: blogEntries,
 	}

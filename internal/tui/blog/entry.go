@@ -50,7 +50,7 @@ func (b blogEntry) visibleContent(pageHeight int) string {
 
 func (m Model) entryView() string {
 	entry := blogEntries[m.selectedEntryIndex]
-	entryVisibleContent := entry.visibleContent(m.contentHeight)
+	entryVisibleContent := entry.visibleContent(m.entryHeight)
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
 		entryVisibleContent,
@@ -77,7 +77,7 @@ func (m *Model) getPrevEntry() {
 
 func (m Model) entryNextPage() {
 	entry := blogEntries[m.selectedEntryIndex]
-	if entry.pageIndex < entry.totalPages(m.contentHeight) - 1 {
+	if entry.pageIndex < entry.totalPages(m.entryHeight) - 1 {
 		entry.pageIndex++
 	}
 }
