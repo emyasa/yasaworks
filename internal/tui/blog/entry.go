@@ -53,3 +53,17 @@ func (m Model) entryView() string {
 		Render(content)
 }
 
+func (m Model) entryNextPage() {
+	entry := m.blogEntries[m.selected]
+	if entry.pageIndex < entry.totalPages(m.contentHeight) - 1 {
+		entry.pageIndex++
+	}
+}
+
+func (m Model) entryPrevPage() {
+	entry := m.blogEntries[m.selected]
+	if entry.pageIndex > 0 {
+		entry.pageIndex--
+	}
+}
+

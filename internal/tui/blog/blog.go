@@ -82,17 +82,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			
 			return m, nil
 		case "n":
-			blogEntry := m.blogEntries[m.selected]
-			if blogEntry.pageIndex < blogEntry.totalPages(m.contentHeight) - 1 {
-				blogEntry.pageIndex++
-			}
+			m.entryNextPage()
 
 			return m, nil
 		case "N":
-			blogEntry := m.blogEntries[m.selected]
-			if blogEntry.pageIndex > 0 {
-				blogEntry.pageIndex--
-			}
+			m.entryPrevPage()
 
 			return m, nil
 		}
