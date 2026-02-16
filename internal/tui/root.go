@@ -7,6 +7,7 @@ import (
 
 	"github.com/emyasa/yasaworks/internal/tui/blog"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
+	"github.com/emyasa/yasaworks/internal/tui/terms"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
@@ -21,6 +22,7 @@ type model struct {
 	theme theme.Theme
 	splash splash.Model
 	blog blog.Model
+	terms terms.Model
 
 	page page
 	viewportWidth int
@@ -38,6 +40,7 @@ func NewModel() (tea.Model, error) {
 		theme: basicTheme,
 		splash: splash.Model{ Theme: basicTheme },
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
+		terms: terms.Model{ Theme: basicTheme },
 		page: splashPage,
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,

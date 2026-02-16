@@ -6,6 +6,8 @@ func (m model) getContent() string {
 	switch m.page {
 	case blogPage:
 		page = m.blog.View()
+	case termsPage:
+		page = m.terms.View()
 	}
 
 	return page
