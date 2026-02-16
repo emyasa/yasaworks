@@ -25,7 +25,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	r, _ := glamour.NewTermRenderer(m.Theme.MarkdownStyle())
+	r, _ := glamour.NewTermRenderer(
+		m.Theme.MarkdownStyle(),
+		glamour.WithPreservedNewLines())
+
 	content, _ := r.Render(manContent)
 
 	return m.Theme.Base().
