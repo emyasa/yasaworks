@@ -4,7 +4,6 @@ package theme
 import "github.com/charmbracelet/lipgloss"
 
 type Theme struct {
-	renderer *lipgloss.Renderer
 	base lipgloss.Style
 
 	brand lipgloss.TerminalColor
@@ -23,7 +22,6 @@ func BasicTheme() Theme {
 	highlight := brandColor
 
 	return Theme{
-		renderer: defaultRenderer,
 		base: defaultRenderer.NewStyle().Foreground(baseColor),
 		brand: brandColor,
 		accent: accentColor,
