@@ -26,7 +26,7 @@ func NewModel(theme theme.Theme, containerWidth int, containerHeight int) Model 
 	entryHeight := containerHeight - 10
 	navWidth := entryWidth - 6 
 
-	setupEntries(entryWidth)
+	setupEntries(entryWidth, theme.MarkdownStyle())
 	
 	return Model{
 		Theme: theme,

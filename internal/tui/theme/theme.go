@@ -1,10 +1,19 @@
 // Package theme handles the shared rendering context of the tui
 package theme
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	_ "embed"
+
+	"github.com/charmbracelet/glamour"
+	"github.com/charmbracelet/lipgloss"
+)
+
+//go:embed styles/dark.json
+var darkStyle []byte
 
 type Theme struct {
 	base lipgloss.Style
+	markdownStyle glamour.TermRendererOption
 
 	brand lipgloss.TerminalColor
 	accent lipgloss.TerminalColor
@@ -23,6 +32,7 @@ func BasicTheme() Theme {
 
 	return Theme{
 		base: defaultRenderer.NewStyle().Foreground(baseColor),
+		markdownStyle: glamour.WithStylesFromJSONBytes(darkStyle),
 		brand: brandColor,
 		accent: accentColor,
 		border: borderColor,
@@ -32,6 +42,10 @@ func BasicTheme() Theme {
 
 func (b Theme) Base() lipgloss.Style {
 	return b.base
+}
+
+func (b Theme) MarkdownStyle() glamour.TermRendererOption {
+	return b.markdownStyle
 }
 
 func (b Theme) TextAccent() lipgloss.Style {

@@ -22,12 +22,9 @@ var blogEntries = []*blogEntry{
 	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md"},
 }
 
-//go:embed styles/dark.json
-var darkStyle []byte
-
-func setupEntries(entryWidth int) {
+func setupEntries(entryWidth int, markdownStyle glamour.TermRendererOption) {
 	r, _ := glamour.NewTermRenderer(
-		glamour.WithStylesFromJSONBytes(darkStyle),
+		markdownStyle,
 		glamour.WithWordWrap(entryWidth))
 
 	for i, entry := range blogEntries {
