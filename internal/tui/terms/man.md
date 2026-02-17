@@ -20,14 +20,17 @@ interface(1)
 > Note: This page simply outlines my terms and how I generally work. 
 > If it makes sense to you, then we're compatible. Ping me, and let's discuss.
 
-# DIRECT ENGAGEMENT ONLY
-I am open to full-time or contract opportunities with direct employers only.
-
-I no longer engage with staffing or intermediary companies.
+# DIRECT AND REMOTE ENGAGEMENT ONLY
+I am open to full-time or contract opportunities with direct employers only.  
 All work arrangements must be directly with the hiring company.
+
+I operate exclusively in a remote setup. I maintain a dedicated office space  
+and have structured my professional life around remote-first execution.  
+This setup is intentional and long term.
 
 # AT-WILL PREFERENCE
 I prefer at-will employment or contracts with mutual termination rights.
 
-Neither party should feel constrained by unnecessary legal or bureaucratic friction. Engagements should remain voluntary and value-driven at all times.
+Neither party should feel constrained by unnecessary legal or bureaucratic  
+friction. Engagements should remain voluntary and value-driven at all times.
 
