@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
@@ -25,7 +26,7 @@ func NewModel(theme theme.Theme, contentWidth int, contentHeight int) Model {
 
 	content, _ := r.Render(manContent)
 
-	vp := viewport.New(contentWidth, contentHeight - 8)
+	vp := viewport.New(contentWidth, contentHeight - 9)
 	vp.SetContent(content)
 
 	return Model{
@@ -49,8 +50,18 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	return m.theme.Base().
-		Margin(1).
+	termsContent := m.theme.Base().
+		Margin(1, 1, 0).
 		Render(m.viewport.View())
+
+	cursor := m.theme.Base().
+		Margin(0, 1).
+		Render(":")
+
+	return lipgloss.JoinVertical(
+		lipgloss.Top,
+		termsContent,
+		cursor,
+	)
 }
 
