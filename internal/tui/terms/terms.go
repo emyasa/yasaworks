@@ -8,11 +8,13 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/tui/cursor"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
 type Model struct {
 	theme theme.Theme
+	cursor cursor.Model
 	viewport *viewport.Model
 }
 
@@ -31,8 +33,13 @@ func NewModel(theme theme.Theme, contentWidth int, contentHeight int) Model {
 
 	return Model{
 		theme: theme,
+		cursor: cursor.Model{ Theme: theme },
 		viewport: &vp,
 	}
+}
+
+func (m Model) Init() tea.Cmd {
+	return m.cursor.Init()
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
@@ -44,6 +51,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "shift+tab", "k", "up":
 			m.viewport.ScrollUp(1)
 		}
+	case cursor.CursorTickMsg:
+		var cmd tea.Cmd
+		m.cursor, cmd = m.cursor.Update(msg)
+		return m, cmd
 	}
 
 	return m, nil
@@ -54,14 +65,14 @@ func (m Model) View() string {
 		Margin(1, 1, 0).
 		Render(m.viewport.View())
 
-	cursor := m.theme.Base().
+	colon := m.theme.Base().
 		Margin(0, 1).
 		Render(":")
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
 		termsContent,
-		cursor,
+		colon + m.cursor.View(),
 	)
 }
 

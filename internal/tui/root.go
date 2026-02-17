@@ -20,11 +20,11 @@ const (
 
 type model struct {
 	theme theme.Theme
+	page page
 	splash splash.Model
 	blog blog.Model
 	terms terms.Model
 
-	page page
 	viewportWidth int
 	viewportHeight int
 	widthContainer int
@@ -38,10 +38,10 @@ func NewModel() (tea.Model, error) {
 
 	return model{
 		theme: basicTheme,
+		page: splashPage,
 		splash: splash.NewModel(basicTheme),
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
-		page: splashPage,
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
 	}, nil
