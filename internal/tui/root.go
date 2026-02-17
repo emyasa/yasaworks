@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/emyasa/yasaworks/internal/tui/blog"
+	"github.com/emyasa/yasaworks/internal/tui/cursor"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
 	"github.com/emyasa/yasaworks/internal/tui/terms"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
@@ -38,7 +39,10 @@ func NewModel() (tea.Model, error) {
 
 	return model{
 		theme: basicTheme,
-		splash: splash.Model{ Theme: basicTheme },
+		splash: splash.Model{
+			Theme: basicTheme,
+			Cursor: cursor.Model{ Theme: basicTheme },
+		},
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
 		page: splashPage,

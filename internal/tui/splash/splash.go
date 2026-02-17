@@ -6,18 +6,15 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/tui/cursor"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
 type Model struct {
 	Theme theme.Theme
-	state state
+	Cursor cursor.Model
 	viewportWidth int
 	viewportHeight int
-}
-
-type state struct {
-	cursor cursorState
 }
 
 type SplashCompleteMsg struct {}
@@ -27,7 +24,7 @@ func(m Model) Init() tea.Cmd {
 		return SplashCompleteMsg{}
 	})
 
-	return tea.Batch(completeSplashCmd, m.cursorInit())
+	return tea.Batch(completeSplashCmd, m.Cursor.Init())
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
@@ -35,8 +32,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.viewportWidth = msg.Width
 		m.viewportHeight = msg.Height
-	case cursorTickMsg:
-		m, cmd := m.cursorUpdate(msg)
+	case cursor.CursorTickMsg:
+		var cmd tea.Cmd
+		m.Cursor, cmd = m.Cursor.Update(msg)
 		return m, cmd
 	}
 
