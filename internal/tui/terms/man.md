@@ -28,9 +28,20 @@ I operate exclusively in a remote setup. I maintain a dedicated office space
 and have structured my professional life around remote-first execution.  
 This setup is intentional and long term.
 
-# AT-WILL PREFERENCE
-I prefer at-will employment or contracts with mutual termination rights.
+# AT-WILL ALIGNMENT
+I favor at-will employment or contracts with mutual termination rights.
 
-Neither party should feel constrained by unnecessary legal or bureaucratic  
-friction. Engagements should remain voluntary and value-driven at all times.
+Engagements should remain voluntary and value-driven at all times. For context, 
+I have maintained an at-will relationship with my current employer for over 
+four years, consistently achieving 95%+ performance evaluations and opting to 
+remain an individual contributor despite being offered a leadership position. 
+
+Flexibility has ensured that both parties continue to receive the expected mutual value from the engagement.
+
+# SERVICES PROVIDED AND APPROACH 
+I provide backend development services focused on delivering maintainable and performant systems. 
+
+Work is output-driven and autonomous. Clients are expected to provide and honor 
+clear requirements and priorities. Clear, but not rigid. Pivots are expected 
+and supported, as long as they remain within Client's decision and discretion.
 
