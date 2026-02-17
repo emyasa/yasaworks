@@ -67,14 +67,14 @@ func (m Model) View() string {
 		Margin(1, 1, 0).
 		Render(m.viewport.View())
 
-	colon := m.theme.Base().
+	cursorView := m.theme.Base().
 		Margin(0, 0, 0, 1).
-		Render(":")
+		Render(":") + m.cursor.View()
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
 		termsContent,
-		colon + m.cursor.View(),
+		cursorView,
 	)
 }
 
