@@ -40,7 +40,7 @@ func NewModel() (tea.Model, error) {
 		theme: basicTheme,
 		splash: splash.Model{ Theme: basicTheme },
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
-		terms: terms.Model{ Theme: basicTheme },
+		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
 		page: splashPage,
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
@@ -74,6 +74,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case blogPage:
 		var cmd tea.Cmd
 		m.blog, cmd = m.blog.Update(msg)
+		return m, cmd
+	case termsPage:
+		var cmd tea.Cmd
+		m.terms, cmd = m.terms.Update(msg)
 		return m, cmd
 	}
 
