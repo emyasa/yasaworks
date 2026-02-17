@@ -48,8 +48,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		switch msg.String() {
 		case "tab", "j", "down":
 			m.viewport.ScrollDown(1)
+			m.cursor.SetVisibility(true)
 		case "shift+tab", "k", "up":
 			m.viewport.ScrollUp(1)
+			m.cursor.SetVisibility(true)
 		}
 	case cursor.CursorTickMsg:
 		var cmd tea.Cmd
@@ -66,7 +68,7 @@ func (m Model) View() string {
 		Render(m.viewport.View())
 
 	colon := m.theme.Base().
-		Margin(0, 1).
+		Margin(0, 0, 0, 1).
 		Render(":")
 
 	return lipgloss.JoinVertical(

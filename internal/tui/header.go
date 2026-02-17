@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss/table"
 )
 
-func (m *model) headerUpdate(msg tea.Msg) {
+func (m *model) headerUpdate(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -14,8 +14,11 @@ func (m *model) headerUpdate(msg tea.Msg) {
 			m.page = blogPage
 		case "m":
 			m.page = termsPage
+			return m.terms.Init()
 		}
 	}
+
+	return nil
 }
 
 func (m model) headerView() string {

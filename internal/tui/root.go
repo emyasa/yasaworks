@@ -65,7 +65,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.page = blogPage
 	}
 
-	m.headerUpdate(msg)
+	cmd := m.headerUpdate(msg)
+	if cmd != nil {
+		return m, cmd
+	}
+
 	switch m.page {
 	case splashPage:
 		var cmd tea.Cmd

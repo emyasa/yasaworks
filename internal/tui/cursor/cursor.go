@@ -33,6 +33,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m *Model) SetVisibility(visible bool) {
+	m.visible = visible
+}
+
 func (m Model) View() string {
 	if m.visible {
 		return m.Theme.Base().
