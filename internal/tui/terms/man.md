@@ -17,6 +17,9 @@ interface(1)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The **interface** is intentionally minimal, isolated, and direct.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;As a result, adapter implementation incurs little to no friction.
 
+> Non-technical translation: this page simple outlines how I work. 
+> If it makes sense to you, ping me, and let's get to work.
+
 **PLACEHOLDER**
 **PLACEHOLDER**
 **PLACEHOLDER**
