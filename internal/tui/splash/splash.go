@@ -11,20 +11,28 @@ import (
 )
 
 type Model struct {
-	Theme theme.Theme
-	Cursor cursor.Model
+	theme theme.Theme
+	cursor cursor.Model
 	viewportWidth int
 	viewportHeight int
 }
 
 type SplashCompleteMsg struct {}
 
+func NewModel(theme theme.Theme) Model {
+	cursor := cursor.Model{ Theme: theme }
+	return Model{
+		theme: theme,
+		cursor: cursor,
+	}
+}
+
 func(m Model) Init() tea.Cmd {
 	completeSplashCmd := tea.Tick(time.Second*2, func(t time.Time) tea.Msg {
 		return SplashCompleteMsg{}
 	})
 
-	return tea.Batch(completeSplashCmd, m.Cursor.Init())
+	return tea.Batch(completeSplashCmd, m.cursor.Init())
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
@@ -34,7 +42,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		m.viewportHeight = msg.Height
 	case cursor.CursorTickMsg:
 		var cmd tea.Cmd
-		m.Cursor, cmd = m.Cursor.Update(msg)
+		m.cursor, cmd = m.cursor.Update(msg)
 		return m, cmd
 	}
 
