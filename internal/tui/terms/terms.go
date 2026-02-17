@@ -67,7 +67,8 @@ func (m Model) View() string {
 		Margin(1, 1, 0).
 		Render(m.viewport.View())
 
-	cursorView := m.theme.Base().
+	cursorView := m.theme.TextAccent().
+		Bold(true).
 		Margin(0, 0, 0, 1).
 		Render(":") + m.cursor.View()
 
