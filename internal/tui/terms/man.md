@@ -20,20 +20,14 @@ interface(1)
 > Non-technical translation: this page simply outlines how I work. 
 > If it makes sense to you, ping me, and let's get to work.
 
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
-**PLACEHOLDER**
+# DIRECT ENGAGEMENT ONLY
+I am open to full-time or contract opportunities with direct employers only.
+
+I no longer engage with staffing or intermediary companies.
+All work arrangements must be directly with the hiring company.
+
+# AT-WILL PREFERENCE
+I prefer at-will employment or contracts with mutual termination rights.
+
+Neither party should feel constrained by unnecessary legal or bureaucratic friction. Engagements should remain voluntary and value-driven at all times.
 
