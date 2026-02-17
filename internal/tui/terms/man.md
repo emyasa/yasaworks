@@ -45,3 +45,16 @@ Work is output-driven and autonomous. Clients are expected to provide and honor
 clear requirements and priorities. Clear, but not rigid. Pivots are expected 
 and supported, as long as they remain within Client's decision and discretion.
 
+# COLLABORATION PHILOSOPHY
+I prioritize natural, outcome-driven collaboration over ceremonies. Stand-ups 
+or any rigidly scheduled meetings rarely add value. Collaboration should happen 
+organically and not be forced at a specific time of day. People over process.
+
+Communication is clear and asynchronous by default. Panic-driven or last-minute 
+meeting requests are discouraged. If something can't be clearly communicated in 
+writing, it's rarely worth discussing in a meeting.
+
+Meetings should have a purpose, such as sharing and presenting requirements 
+when needed. Even then, technical clarifications and feasibility checks are 
+expected to occur asynchronously.
+
