@@ -58,3 +58,23 @@ Meetings should have a purpose, such as sharing and presenting requirements
 when needed. Even then, technical clarifications and feasibility checks are 
 expected to occur asynchronously.
 
+# ESTIMATE PHILOSOPHY
+I treat estimates for what they are: estimates, not deadlines.
+
+They are not arbitrary numbers. Estimates are based on feasibility checks, 
+prior experience, and sometimes a quick proof of concept. They are considered 
+before they’re given.
+
+Estimation is not the main goal. Not every task requires one, and progress 
+or prioritization should not be blocked by the absence of an estimate.
+
+From experience, well-scoped, minimal requirements usually get resolve 
+within 1–3 days of focused work. For more complex tasks, foundational components 
+are built first, establishing a base that can be developed incrementally.
+
+When mature professionals are aligned on doing the work properly, there is 
+no incentive to underestimate or to pad. Estimates can simply reflect the work.
+
+Estimates are a lot like predicting the future anyways, and we won't get it 100%
+accurately, but if that's the future we want, then we can start creating it.
+
