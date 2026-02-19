@@ -45,6 +45,7 @@ func NewModel() (tea.Model, error) {
 		splash: splash.NewModel(basicTheme),
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
+		chat: chat.NewModel(basicTheme),
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
 	}, nil

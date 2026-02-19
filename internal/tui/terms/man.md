@@ -58,7 +58,7 @@ Meetings should have a purpose, such as sharing and presenting requirements
 when needed. Even then, technical clarifications and feasibility checks are 
 expected to occur asynchronously.
 
-# ESTIMATE PHILOSOPHY
+# ESTIMATION PHILOSOPHY
 I treat estimates for what they are: estimates, not deadlines.
 
 They are not arbitrary numbers. Estimates are based on feasibility checks, 
