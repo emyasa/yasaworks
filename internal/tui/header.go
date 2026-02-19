@@ -15,6 +15,8 @@ func (m *model) headerUpdate(msg tea.Msg) tea.Cmd {
 		case "m":
 			m.page = termsPage
 			return m.terms.Init()
+		case "p":
+			m.page = chatPage
 		}
 	}
 
@@ -29,20 +31,22 @@ func (m model) headerView() string {
 	logo := bold("yasaworks")
 	blog := accent("l") + base(" logs")
 	terms := accent("m") + base(" man interface")
-	contact := accent("p") + base(" ping")
+	chat := accent("p") + base(" ping")
 
 	switch m.page {
 	case blogPage:
 		blog = accent("l logs")
 	case termsPage:
 		terms = accent("m man interface")
+	case chatPage:
+		chat = accent("p ping")
 	}
 
 	tabs := []string{
 		logo,
 		blog,
 		terms,
-		contact,
+		chat,
 	}
 
 	table := table.New().

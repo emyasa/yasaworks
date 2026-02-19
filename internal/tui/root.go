@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 
 	"github.com/emyasa/yasaworks/internal/tui/blog"
+	"github.com/emyasa/yasaworks/internal/tui/chat"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
 	"github.com/emyasa/yasaworks/internal/tui/terms"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
@@ -16,6 +17,7 @@ const (
 	splashPage page = iota
 	blogPage
 	termsPage
+	chatPage
 )
 
 type model struct {
@@ -24,6 +26,7 @@ type model struct {
 	splash splash.Model
 	blog blog.Model
 	terms terms.Model
+	chat chat.Model
 
 	viewportWidth int
 	viewportHeight int

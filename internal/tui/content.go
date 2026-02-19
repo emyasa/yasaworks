@@ -8,6 +8,8 @@ func (m model) getContent() string {
 		page = m.blog.View()
 	case termsPage:
 		page = m.terms.View()
+	case chatPage:
+		page = m.chat.View()
 	}
 
 	return page
