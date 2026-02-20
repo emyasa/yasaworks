@@ -2,8 +2,6 @@
 package chat
 
 import (
-	"fmt"
-
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
@@ -17,7 +15,7 @@ type Model struct {
 func NewModel(theme theme.Theme) Model {
 	ti := textinput.New()
 	ti.Prompt = "> "
-	ti.Placeholder = "type a command..."
+	ti.Placeholder = "type a message..."
 	ti.Focus()
 	ti.CharLimit = 256
 	ti.Width = 60
@@ -35,6 +33,16 @@ func NewModel(theme theme.Theme) Model {
 }
 
 func (m Model) View() string {
-	return "FOCUSED: " + fmt.Sprint(m.input.Focused()) + "\n\n" + m.input.View()
+	inputView := m.theme.Base().
+		MarginLeft(1).
+		Render(m.input.View())
+
+	statusLine := m.theme.Base().
+		MarginLeft(1).
+		Render("-- INSERT --")
+
+	child := lipgloss.JoinVertical(lipgloss.Left, inputView, statusLine)
+
+	return lipgloss.Place(80, 24, lipgloss.Left, lipgloss.Bottom, child)
 }
 
