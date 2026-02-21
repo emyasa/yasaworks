@@ -13,6 +13,10 @@ func (m *model) headerUpdate(msg tea.Msg) tea.Cmd {
 		case "l":
 			m.page = blogPage
 		case "m":
+			if m.page == termsPage {
+				return nil
+			}
+
 			m.page = termsPage
 			return m.terms.Init()
 		case "p":
