@@ -20,7 +20,7 @@ type Model struct {
 	Mode mode
 }
 
-func NewModel(theme theme.Theme) *Model {
+func NewModel(theme theme.Theme) Model {
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
@@ -31,7 +31,7 @@ func NewModel(theme theme.Theme) *Model {
 	ti.TextStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("7"))
 	ti.Cursor.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
 
-	return &Model{
+	return Model{
 		theme: theme,
 		input: ti,
 	}
@@ -41,7 +41,7 @@ func (m *Model) Init() {
 	m.Mode = Insert
 }
 
-func (m *Model) Update(msg tea.Msg) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -55,6 +55,8 @@ func (m *Model) Update(msg tea.Msg) {
 			}
 		}
 	}
+
+	return m, nil
 }
 
 func (m Model) View() string {

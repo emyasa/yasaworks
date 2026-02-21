@@ -7,7 +7,7 @@ import (
 	"github.com/emyasa/yasaworks/internal/tui/chat"
 )
 
-func (m *model) headerUpdate(msg tea.Msg) tea.Cmd {
+func (m *model) hotKeyUpdate(msg tea.Msg) tea.Cmd {
 	mode := m.chat.Mode
 	if mode == chat.Insert {
 		return nil
@@ -28,6 +28,8 @@ func (m *model) headerUpdate(msg tea.Msg) tea.Cmd {
 		case "p":
 			m.page = chatPage
 			m.chat.Init()
+		case "q":
+			return tea.Quit
 		}
 	}
 
