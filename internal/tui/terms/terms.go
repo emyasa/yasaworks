@@ -67,10 +67,20 @@ func (m Model) View() string {
 		Margin(1, 1, 0).
 		Render(m.viewport.View())
 
-	cursorView := m.theme.TextAccent().
+	cursorPrefix := m.theme.TextAccent().
 		Bold(true).
 		Margin(0, 0, 0, 1).
-		Render(":") + m.cursor.View()
+		Render(":")
+
+	if m.viewport.AtBottom() {
+		cursorPrefix = m.theme.Base().
+			Margin(0, 0, 0, 1).
+			Foreground(lipgloss.Color("#000000")).
+			Background(lipgloss.Color("#FFFFFF")).
+			Render("(END)")
+	}
+
+	cursorView := cursorPrefix + m.cursor.View()
 
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
