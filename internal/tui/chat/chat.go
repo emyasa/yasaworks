@@ -3,32 +3,57 @@ package chat
 
 import (
 	"github.com/charmbracelet/bubbles/textinput"
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
+)
+
+type mode = int
+const (
+	Normal mode = iota
+	Insert
 )
 
 type Model struct {
 	theme theme.Theme
 	input textinput.Model
+	Mode mode
 }
 
-func NewModel(theme theme.Theme) Model {
+func NewModel(theme theme.Theme) *Model {
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
 	ti.Focus()
-	ti.CharLimit = 256
-	ti.Width = 60
 
 	// Remove default styling for clean terminal look
 	ti.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
 	ti.TextStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("7"))
 	ti.Cursor.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
 
-
-	return Model{
+	return &Model{
 		theme: theme,
 		input: ti,
+	}
+}
+
+func (m *Model) Init() {
+	m.Mode = Insert
+}
+
+func (m *Model) Update(msg tea.Msg) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "ctrl+c", "esc":
+			if m.Mode == Insert {
+				m.Mode = Normal
+			}
+		case "i":
+			if m.Mode == Normal {
+				m.Mode = Insert
+			}
+		}
 	}
 }
 
@@ -37,9 +62,14 @@ func (m Model) View() string {
 		MarginLeft(1).
 		Render(m.input.View())
 
+	modeString := ""
+	if m.Mode == Insert {
+		modeString = "-- INSERT --"
+	}
+
 	statusLine := m.theme.Base().
 		MarginLeft(1).
-		Render("-- INSERT --")
+		Render(modeString)
 
 	child := lipgloss.JoinVertical(lipgloss.Left, inputView, statusLine)
 

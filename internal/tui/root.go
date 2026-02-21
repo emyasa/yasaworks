@@ -25,7 +25,7 @@ type model struct {
 	splash splash.Model
 	blog blog.Model
 	terms terms.Model
-	chat chat.Model
+	chat *chat.Model
 
 	viewportWidth int
 	viewportHeight int
@@ -58,7 +58,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "q", "ctrl+c":
+		case "q":
 			return m, tea.Quit
 		}
 	case tea.WindowSizeMsg:
@@ -86,6 +86,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		var cmd tea.Cmd
 		m.terms, cmd = m.terms.Update(msg)
 		return m, cmd
+	case chatPage:
+		m.chat.Update(msg)
 	}
 
 	return m, nil

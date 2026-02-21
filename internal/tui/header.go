@@ -4,9 +4,15 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/table"
+	"github.com/emyasa/yasaworks/internal/tui/chat"
 )
 
 func (m *model) headerUpdate(msg tea.Msg) tea.Cmd {
+	mode := m.chat.Mode
+	if mode == chat.Insert {
+		return nil
+	}
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -21,6 +27,7 @@ func (m *model) headerUpdate(msg tea.Msg) tea.Cmd {
 			return m.terms.Init()
 		case "p":
 			m.page = chatPage
+			m.chat.Init()
 		}
 	}
 
