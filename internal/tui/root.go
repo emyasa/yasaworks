@@ -63,8 +63,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.page = blogPage
 	}
 
-	cmd := m.hotKeyUpdate(msg)
-	if cmd != nil {
+	cmd, handled := m.hotKeyUpdate(msg)
+	if handled {
 		return m, cmd
 	}
 

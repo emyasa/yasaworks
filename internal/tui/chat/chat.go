@@ -2,6 +2,7 @@
 package chat
 
 import (
+	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -24,7 +25,6 @@ func NewModel(theme theme.Theme) Model {
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
-	ti.Focus()
 
 	// Remove default styling for clean terminal look
 	ti.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
@@ -37,8 +37,10 @@ func NewModel(theme theme.Theme) Model {
 	}
 }
 
-func (m *Model) Init() {
+func (m *Model) Init() tea.Cmd {
 	m.Mode = Insert
+	m.input.Focus()
+	return m.input.Cursor.BlinkCmd()
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
@@ -48,15 +50,26 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "ctrl+c", "esc":
 			if m.Mode == Insert {
 				m.Mode = Normal
+				m.input.Cursor.SetMode(cursor.CursorStatic)
 			}
 		case "i":
 			if m.Mode == Normal {
 				m.Mode = Insert
+				m.input.Cursor.SetMode(cursor.CursorBlink)
+
+				return m, m.input.Cursor.BlinkCmd()
 			}
 		}
 	}
 
-	return m, nil
+	if m.Mode == Normal {
+		return m, nil
+	}
+
+	var cmd tea.Cmd
+	m.input, cmd = m.input.Update(msg)
+
+	return m, cmd
 }
 
 func (m Model) View() string {

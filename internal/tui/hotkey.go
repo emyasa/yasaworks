@@ -5,10 +5,10 @@ import (
 	"github.com/emyasa/yasaworks/internal/tui/chat"
 )
 
-func (m *model) hotKeyUpdate(msg tea.Msg) tea.Cmd {
+func (m *model) hotKeyUpdate(msg tea.Msg) (tea.Cmd, bool) {
 	mode := m.chat.Mode
 	if mode == chat.Insert {
-		return nil
+		return nil, false
 	}
 
 	switch msg := msg.(type) {
@@ -18,20 +18,20 @@ func (m *model) hotKeyUpdate(msg tea.Msg) tea.Cmd {
 			m.page = blogPage
 		case "m":
 			if m.page == termsPage {
-				return nil
+				return nil, false
 			}
 
 			m.page = termsPage
-			return m.terms.Init()
+			return m.terms.Init(), true
 		case "p":
 			m.page = chatPage
-			m.chat.Init()
+			return m.chat.Init(), true
 		case "q":
-			return tea.Quit
+			return tea.Quit, true
 		}
 	}
 
-	return nil
+	return nil, false
 }
 
 
