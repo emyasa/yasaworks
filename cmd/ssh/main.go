@@ -20,14 +20,7 @@ func main() {
 		wish.WithAddress(":22"),
 		wish.WithHostKeyPath(".ssh/host_key"),
 		wish.WithMiddleware(
-			bubbletea.Middleware(func(sess ssh.Session) (tea.Model, []tea.ProgramOption) {
-				model, err := tui.NewModel()
-				if err != nil {
-					return nil, []tea.ProgramOption{}
-				}
-				
-				return model, []tea.ProgramOption{tea.WithAltScreen()}
-			}),
+			bubbletea.Middleware(teaHandler),
 			activeterm.Middleware(),
 		),
 		wish.WithPublicKeyAuth(func(ctx ssh.Context, key ssh.PublicKey) bool {
@@ -52,5 +45,14 @@ func main() {
 
 	log.Println("SSH TUI running on port 22")
 	log.Fatal(s.ListenAndServe())
+}
+
+func teaHandler (sess ssh.Session) (tea.Model, []tea.ProgramOption) {
+	model, err := tui.NewModel()
+	if err != nil {
+		return nil, []tea.ProgramOption{}
+	}
+
+	return model, []tea.ProgramOption{tea.WithAltScreen()}
 }
 
