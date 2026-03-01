@@ -33,7 +33,11 @@ type model struct {
 	heightContainer int
 }
 
-func NewModel() (tea.Model, error) {
+func NewModel(
+	fingerprint string,
+	anonymous bool,
+	clientIP *string,
+) (tea.Model, error) {
 	basicTheme := theme.BasicTheme()
 	widthContainer := 80
 	heightContainer := 30

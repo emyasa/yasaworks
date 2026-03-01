@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	model, err := tui.NewModel()
+	model, err := tui.NewModel("fingerprint", false, nil)
 	if err != nil {
 		panic(err)
 	}

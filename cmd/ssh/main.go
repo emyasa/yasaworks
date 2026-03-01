@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"log"
+	"net"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/ssh"
@@ -47,8 +48,14 @@ func main() {
 	log.Fatal(s.ListenAndServe())
 }
 
-func teaHandler (sess ssh.Session) (tea.Model, []tea.ProgramOption) {
-	model, err := tui.NewModel()
+func teaHandler (s ssh.Session) (tea.Model, []tea.ProgramOption) {
+	fingerprint := s.Context().Value("fingerprint").(string)
+	anonymous := s.Context().Value("anonymous").(bool)
+
+	clientAddress := s.RemoteAddr().String()
+	host, _, _ := net.SplitHostPort(clientAddress)
+
+	model, err := tui.NewModel(fingerprint, anonymous, &host)
 	if err != nil {
 		return nil, []tea.ProgramOption{}
 	}
