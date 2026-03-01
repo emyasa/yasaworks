@@ -2,16 +2,12 @@ package blog
 
 import "strings"
 
-func (m Model) constructPinnedEntries(sb *strings.Builder) {
-	headerStyle := m.Theme.Base().
-		Width(m.menuWidth+2).
-		Bold(true).
-		Padding(0, 1)
-
-	sb.WriteString(headerStyle.Render("Pinned"))
-	sb.WriteString("\n")
-
+func (m Model) constructEntries(sb *strings.Builder, predicate func(*blogEntry) bool) {
 	for i, e := range blogEntries {
+		if !predicate(e) {
+			continue
+		}
+
 		menuItemStyle := m.Theme.Base().
 			Width(m.menuWidth+2).
 			Padding(0, 0, 0, 1)
@@ -30,10 +26,19 @@ func (m Model) constructPinnedEntries(sb *strings.Builder) {
 }
 
 func (m Model) menuView() string {
+	headerStyle := m.Theme.Base().
+		Width(m.menuWidth+2).
+		Bold(true).
+		Padding(0, 1)
+
 	var sb strings.Builder
-	m.constructPinnedEntries(&sb)
-	sb.WriteString("\n\n")
-	m.constructPinnedEntries(&sb)
+	sb.WriteString(headerStyle.Render("Pinned"))
+	sb.WriteString("\n")
+
+	m.constructEntries(&sb, func(e *blogEntry) bool { return e.pinned })
+	sb.WriteString("\n")
+
+	m.constructEntries(&sb, func(e *blogEntry) bool { return !e.pinned })
 
 	containerStyle := m.Theme.Base().
 		MarginTop(1).
