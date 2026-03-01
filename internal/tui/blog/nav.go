@@ -12,7 +12,7 @@ func (m Model) navView() string {
 
 	var navParts []string
 
-	pinnedEntry := pinnedEntries[m.selectedEntryIndex]
+	pinnedEntry := blogEntries[m.selectedEntryIndex]
 	if pinnedEntry.pageIndex > 0 {
 		prevNav := base("<< ") + accent("N") + base(" prev")
 		navParts = append(navParts, prevNav)

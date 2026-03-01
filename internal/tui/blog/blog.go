@@ -9,8 +9,6 @@ import (
 
 type Model struct {
 	Theme theme.Theme
-	ContainerWidth int
-	ContainerHeight int
 
 	menuWidth int
 	entryWidth int

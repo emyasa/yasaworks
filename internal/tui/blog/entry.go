@@ -14,11 +14,14 @@ type blogEntry struct {
 	content   string
 	lines     []string
 	pageIndex int
+	pinned	  bool
 }
 
 //go:embed entries/*.md
 var entriesFS embed.FS
-var pinnedEntries = []*blogEntry{
+var blogEntries = []*blogEntry{
+	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md", pinned: true},
+	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md"},
 	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md"},
 }
 
@@ -27,27 +30,25 @@ func setupEntries(entryWidth int, markdownStyle glamour.TermRendererOption) {
 		markdownStyle,
 		glamour.WithWordWrap(entryWidth))
 
-	for i, entry := range pinnedEntries {
+	for i, entry := range blogEntries {
 		content, err := entriesFS.ReadFile(entry.mdPath)
 		if err != nil {
 			panic(err)
 		}
 
 		detailContent, _ := r.Render(string(content))
-		pinnedEntries[i].content = detailContent
-		pinnedEntries[i].lines = strings.Split(detailContent, "\n")
+		blogEntries[i].content = detailContent
+		blogEntries[i].lines = strings.Split(detailContent, "\n")
 	}
 }
 
 func maxEntryWidth() int {
-	max := 0
-	for _, e := range pinnedEntries {
-		if w := lipgloss.Width(e.name); w > max {
-			max = w
-		}
+	maxWidth := 0
+	for _, e := range blogEntries {
+		maxWidth = max(lipgloss.Width(e.name), maxWidth)
 	}
 
-	return max
+	return maxWidth
 }
 
 func (b blogEntry) totalPages(pageHeight int) int {
@@ -64,7 +65,7 @@ func (b blogEntry) visibleContent(pageHeight int) string {
 }
 
 func (m *Model) getNextEntry() {
-	if m.selectedEntryIndex < len(pinnedEntries)-1 {
+	if m.selectedEntryIndex < len(blogEntries)-1 {
 		m.selectedEntryIndex += 1
 	}
 }
@@ -76,21 +77,21 @@ func (m *Model) getPrevEntry() {
 }
 
 func (m Model) entryNextPage() {
-	entry := pinnedEntries[m.selectedEntryIndex]
+	entry := blogEntries[m.selectedEntryIndex]
 	if entry.pageIndex < entry.totalPages(m.entryHeight)-1 {
 		entry.pageIndex++
 	}
 }
 
 func (m Model) entryPrevPage() {
-	entry := pinnedEntries[m.selectedEntryIndex]
+	entry := blogEntries[m.selectedEntryIndex]
 	if entry.pageIndex > 0 {
 		entry.pageIndex--
 	}
 }
 
 func (m Model) entryView() string {
-	entry := pinnedEntries[m.selectedEntryIndex]
+	entry := blogEntries[m.selectedEntryIndex]
 	entryVisibleContent := entry.visibleContent(m.entryHeight)
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
