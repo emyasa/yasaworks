@@ -4,9 +4,18 @@ import "strings"
 
 func (m Model) menuView() string {
 	var sb strings.Builder
-	for i, e := range blogEntries {
+
+	headerStyle := m.Theme.Base().
+		Width(m.menuWidth+2).
+		Padding(0, 1).
+		Bold(true).
+		Foreground(m.Theme.Accent())
+	sb.WriteString(headerStyle.Render("Pinned"))
+	sb.WriteString("\n")
+
+	for i, e := range pinnedEntries {
 		menuItemStyle := m.Theme.Base().
-			Width(m.menuWidth + 2).
+			Width(m.menuWidth+2).
 			Padding(0, 1)
 
 		if i == m.selectedEntryIndex {
@@ -16,7 +25,7 @@ func (m Model) menuView() string {
 		}
 
 		sb.WriteString(menuItemStyle.Render(e.name))
-		if i < len(blogEntries) - 1 {
+		if i < len(pinnedEntries)-1 {
 			sb.WriteString("\n")
 		}
 	}
@@ -27,4 +36,3 @@ func (m Model) menuView() string {
 
 	return containerStyle.Render(sb.String())
 }
- 

@@ -12,13 +12,13 @@ func (m Model) navView() string {
 
 	var navParts []string
 
-	blogEntry := blogEntries[m.selectedEntryIndex]
-	if blogEntry.pageIndex > 0 {
+	pinnedEntry := pinnedEntries[m.selectedEntryIndex]
+	if pinnedEntry.pageIndex > 0 {
 		prevNav := base("<< ") + accent("N") + base(" prev")
 		navParts = append(navParts, prevNav)
 	}
 
-	if blogEntry.pageIndex < blogEntry.totalPages(m.entryHeight) - 1 {
+	if pinnedEntry.pageIndex < pinnedEntry.totalPages(m.entryHeight)-1 {
 		nextNav := accent("n") + base(" next >>")
 		navParts = append(navParts, nextNav)
 	}
@@ -30,4 +30,3 @@ func (m Model) navView() string {
 		Align(lipgloss.Right).
 		Render(nav)
 }
-

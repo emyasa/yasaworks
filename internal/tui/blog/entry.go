@@ -9,16 +9,16 @@ import (
 )
 
 type blogEntry struct {
-	name string
-	mdPath string
-	content string
-	lines []string
+	name      string
+	mdPath    string
+	content   string
+	lines     []string
 	pageIndex int
 }
 
 //go:embed entries/*.md
 var entriesFS embed.FS
-var blogEntries = []*blogEntry{
+var pinnedEntries = []*blogEntry{
 	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md"},
 }
 
@@ -27,21 +27,21 @@ func setupEntries(entryWidth int, markdownStyle glamour.TermRendererOption) {
 		markdownStyle,
 		glamour.WithWordWrap(entryWidth))
 
-	for i, entry := range blogEntries {
+	for i, entry := range pinnedEntries {
 		content, err := entriesFS.ReadFile(entry.mdPath)
 		if err != nil {
 			panic(err)
 		}
 
 		detailContent, _ := r.Render(string(content))
-		blogEntries[i].content = detailContent
-		blogEntries[i].lines = strings.Split(detailContent, "\n")
+		pinnedEntries[i].content = detailContent
+		pinnedEntries[i].lines = strings.Split(detailContent, "\n")
 	}
 }
 
 func maxEntryWidth() int {
 	max := 0
-	for _, e := range blogEntries {
+	for _, e := range pinnedEntries {
 		if w := lipgloss.Width(e.name); w > max {
 			max = w
 		}
@@ -64,7 +64,7 @@ func (b blogEntry) visibleContent(pageHeight int) string {
 }
 
 func (m *Model) getNextEntry() {
-	if m.selectedEntryIndex < len(blogEntries) - 1 {
+	if m.selectedEntryIndex < len(pinnedEntries)-1 {
 		m.selectedEntryIndex += 1
 	}
 }
@@ -76,21 +76,21 @@ func (m *Model) getPrevEntry() {
 }
 
 func (m Model) entryNextPage() {
-	entry := blogEntries[m.selectedEntryIndex]
-	if entry.pageIndex < entry.totalPages(m.entryHeight) - 1 {
+	entry := pinnedEntries[m.selectedEntryIndex]
+	if entry.pageIndex < entry.totalPages(m.entryHeight)-1 {
 		entry.pageIndex++
 	}
 }
 
 func (m Model) entryPrevPage() {
-	entry := blogEntries[m.selectedEntryIndex]
+	entry := pinnedEntries[m.selectedEntryIndex]
 	if entry.pageIndex > 0 {
 		entry.pageIndex--
 	}
 }
 
 func (m Model) entryView() string {
-	entry := blogEntries[m.selectedEntryIndex]
+	entry := pinnedEntries[m.selectedEntryIndex]
 	entryVisibleContent := entry.visibleContent(m.entryHeight)
 	content := lipgloss.JoinVertical(
 		lipgloss.Top,
@@ -103,4 +103,3 @@ func (m Model) entryView() string {
 		MarginTop(1).
 		Render(content)
 }
-
