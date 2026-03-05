@@ -6,7 +6,6 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
-	"github.com/emyasa/yasaworks/internal/db"
 	"github.com/emyasa/yasaworks/internal/tui/blog"
 	"github.com/emyasa/yasaworks/internal/tui/chat"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
