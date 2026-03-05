@@ -2,8 +2,11 @@
 package tui
 
 import (
+	"database/sql"
+
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/emyasa/yasaworks/internal/db"
 	"github.com/emyasa/yasaworks/internal/tui/blog"
 	"github.com/emyasa/yasaworks/internal/tui/chat"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
@@ -20,6 +23,11 @@ const (
 )
 
 type model struct {
+	db *sql.DB
+	fingerprint string
+	anonymous bool
+	clientIP *string
+
 	theme theme.Theme
 	page page
 	splash splash.Model
@@ -34,6 +42,7 @@ type model struct {
 }
 
 func NewModel(
+	db *sql.DB,
 	fingerprint string,
 	anonymous bool,
 	clientIP *string,
@@ -43,6 +52,10 @@ func NewModel(
 	heightContainer := 30
 
 	return model{
+		db: db,
+		fingerprint: fingerprint,
+		anonymous: anonymous,
+		clientIP: clientIP,
 		theme: basicTheme,
 		page: splashPage,
 		splash: splash.NewModel(basicTheme),

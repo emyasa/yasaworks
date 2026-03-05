@@ -1,5 +1,6 @@
 yasaworks
 yasaworks-mac
+data/*.db
 *.exe
 *.out
 *.o

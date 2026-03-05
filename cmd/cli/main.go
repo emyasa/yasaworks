@@ -3,12 +3,16 @@ package main
 import (
 	"log"
 
-    tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea"
+	"github.com/emyasa/yasaworks/internal/db"
 	"github.com/emyasa/yasaworks/internal/tui"
 )
 
 func main() {
-	model, err := tui.NewModel("fingerprint", false, nil)
+	database := db.New()
+	defer database.Close()
+
+	model, err := tui.NewModel(database, "fingerprint", false, nil)
 	if err != nil {
 		panic(err)
 	}

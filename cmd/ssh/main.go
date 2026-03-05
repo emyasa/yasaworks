@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/md5"
+	"database/sql"
 	"encoding/hex"
 	"log"
 	"net"
@@ -11,17 +12,21 @@ import (
 	"github.com/charmbracelet/wish"
 	"github.com/charmbracelet/wish/activeterm"
 	"github.com/charmbracelet/wish/bubbletea"
+	"github.com/emyasa/yasaworks/internal/db"
 	"github.com/emyasa/yasaworks/internal/tui"
 	"github.com/google/uuid"
 	gossh "golang.org/x/crypto/ssh"
 )
 
 func main() {
+	database := db.New()
+	defer database.Close()
+
 	s, err := wish.NewServer(
 		wish.WithAddress(":22"),
 		wish.WithHostKeyPath(".ssh/host_key"),
 		wish.WithMiddleware(
-			bubbletea.Middleware(teaHandler),
+			bubbletea.Middleware(teaHandler(database)),
 			activeterm.Middleware(),
 		),
 		wish.WithPublicKeyAuth(func(ctx ssh.Context, key ssh.PublicKey) bool {
@@ -48,18 +53,20 @@ func main() {
 	log.Fatal(s.ListenAndServe())
 }
 
-func teaHandler (s ssh.Session) (tea.Model, []tea.ProgramOption) {
-	fingerprint := s.Context().Value("fingerprint").(string)
-	anonymous := s.Context().Value("anonymous").(bool)
+func teaHandler(db *sql.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
+	return func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
+		fingerprint := s.Context().Value("fingerprint").(string)
+		anonymous := s.Context().Value("anonymous").(bool)
 
-	clientAddress := s.RemoteAddr().String()
-	host, _, _ := net.SplitHostPort(clientAddress)
+		clientAddress := s.RemoteAddr().String()
+		host, _, _ := net.SplitHostPort(clientAddress)
 
-	model, err := tui.NewModel(fingerprint, anonymous, &host)
-	if err != nil {
-		return nil, []tea.ProgramOption{}
+		model, err := tui.NewModel(db, fingerprint, anonymous, &host)
+		if err != nil {
+			return nil, []tea.ProgramOption{}
+		}
+
+		return model, []tea.ProgramOption{tea.WithAltScreen()}
 	}
-
-	return model, []tea.ProgramOption{tea.WithAltScreen()}
 }
 
