@@ -21,7 +21,7 @@ const (
 )
 
 type model struct {
-	database *db.DB
+	db *db.DB
 	fingerprint string
 	anonymous bool
 	clientIP *string
@@ -40,7 +40,7 @@ type model struct {
 }
 
 func NewModel(
-	database *db.DB,
+	db *db.DB,
 	fingerprint string,
 	anonymous bool,
 	clientIP *string,
@@ -50,7 +50,7 @@ func NewModel(
 	heightContainer := 30
 
 	return model{
-		database: database,
+		db: db,
 		fingerprint: fingerprint,
 		anonymous: anonymous,
 		clientIP: clientIP,

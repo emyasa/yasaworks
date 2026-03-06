@@ -18,14 +18,14 @@ import (
 )
 
 func main() {
-	database := db.New()
-	defer database.Close()
+	db := db.New()
+	defer db.Close()
 
 	s, err := wish.NewServer(
 		wish.WithAddress(":22"),
 		wish.WithHostKeyPath(".ssh/host_key"),
 		wish.WithMiddleware(
-			bubbletea.Middleware(teaHandler(database)),
+			bubbletea.Middleware(teaHandler(db)),
 			activeterm.Middleware(),
 		),
 		wish.WithPublicKeyAuth(func(ctx ssh.Context, key ssh.PublicKey) bool {
@@ -52,7 +52,7 @@ func main() {
 	log.Fatal(s.ListenAndServe())
 }
 
-func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
+func teaHandler(db *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	return func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 		fingerprint := s.Context().Value("fingerprint").(string)
 		anonymous := s.Context().Value("anonymous").(bool)
@@ -60,7 +60,7 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 		clientAddress := s.RemoteAddr().String()
 		host, _, _ := net.SplitHostPort(clientAddress)
 
-		model, err := tui.NewModel(database, fingerprint, anonymous, &host)
+		model, err := tui.NewModel(db, fingerprint, anonymous, &host)
 		if err != nil {
 			return nil, []tea.ProgramOption{}
 		}

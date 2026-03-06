@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	database := db.New()
-	defer database.Close()
+	db := db.New()
+	defer db.Close()
 
-	model, err := tui.NewModel(database, "fingerprint", false, nil)
+	model, err := tui.NewModel(db, "fingerprint", false, nil)
 	if err != nil {
 		panic(err)
 	}
