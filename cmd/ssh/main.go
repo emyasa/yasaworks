@@ -60,8 +60,10 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 		clientAddress := s.RemoteAddr().String()
 		host, _, _ := net.SplitHostPort(clientAddress)
 
-		request := db.UpsertUserRequest{Fingerprint: fingerprint, ClientIP: host}
-		database.UpsertUser(s.Context(), request)
+		if !anonymous {
+			request := db.UpsertUserRequest{Fingerprint: fingerprint, ClientIP: host}
+			database.UpsertUser(s.Context(), request)
+		}
 
 		model, err := tui.NewModel(database, fingerprint, anonymous, &host)
 		if err != nil {
