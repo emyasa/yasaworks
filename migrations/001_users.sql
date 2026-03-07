@@ -4,7 +4,7 @@ CREATE TABLE users (
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE TABLE user_ips (
+CREATE TABLE login_history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     ip_address TEXT NOT NULL,
