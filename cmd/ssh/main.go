@@ -52,7 +52,7 @@ func main() {
 	log.Fatal(s.ListenAndServe())
 }
 
-func teaHandler(db *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
+func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	return func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 		fingerprint := s.Context().Value("fingerprint").(string)
 		anonymous := s.Context().Value("anonymous").(bool)
@@ -60,7 +60,10 @@ func teaHandler(db *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOption) 
 		clientAddress := s.RemoteAddr().String()
 		host, _, _ := net.SplitHostPort(clientAddress)
 
-		model, err := tui.NewModel(db, fingerprint, anonymous, &host)
+		request := db.UpsertUserRequest{Fingerprint: fingerprint, ClientIP: host}
+		database.UpsertUser(s.Context(), request)
+
+		model, err := tui.NewModel(database, fingerprint, anonymous, &host)
 		if err != nil {
 			return nil, []tea.ProgramOption{}
 		}
