@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"database/sql"
-	"log"
 	"time"
 
 	"github.com/emyasa/yasaworks/internal/tracer"
@@ -14,7 +13,7 @@ type UpsertUserRequest struct {
 	ClientIP string
 }
 
-func (db *DB) UpsertUser(ctx context.Context, r UpsertUserRequest) {
+func (db *DB) UpsertUser(ctx context.Context, r UpsertUserRequest) error {
 	ctx, span := tracer.Start(ctx, "UpsertUser")
 	defer span.End()
 
@@ -28,12 +27,12 @@ func (db *DB) UpsertUser(ctx context.Context, r UpsertUserRequest) {
 	if err == sql.ErrNoRows {
 		result, err := db.handle.Exec("INSERT INTO users (fingerprint) VALUES (?)", r.Fingerprint)
 		if err != nil {
-			log.Fatal("UpsertUser Error: " + err.Error())
+			return err
 		}
 
 		id, err := result.LastInsertId()
 		if err != nil {
-			log.Fatal("UpsertUser Error: " + err.Error())
+			return err
 		}
 
 		userID = uint64(id)
@@ -41,7 +40,9 @@ func (db *DB) UpsertUser(ctx context.Context, r UpsertUserRequest) {
 
 	_, err = db.handle.Exec("INSERT INTO login_history (user_id, ip_address) VALUES (?, ?)", userID, r.ClientIP)
 	if err != nil {
-		log.Fatal("UpsertUser Error: " + err.Error())
+		return err
 	}
+
+	return nil
 }
 

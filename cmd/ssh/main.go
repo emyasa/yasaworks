@@ -63,13 +63,19 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 
 		clientAddress := s.RemoteAddr().String()
 		host, _, _ := net.SplitHostPort(clientAddress)
+		model, err := tui.NewModel(database, fingerprint, anonymous, &host)
 
-		if !anonymous {
-			request := db.UpsertUserRequest{Fingerprint: fingerprint, ClientIP: host}
-			database.UpsertUser(ctx, request)
+		if anonymous {
+			if err != nil {
+				return nil, []tea.ProgramOption{}
+			}
+
+			return model, []tea.ProgramOption{tea.WithAltScreen()}
 		}
 
-		model, err := tui.NewModel(database, fingerprint, anonymous, &host)
+		request := db.UpsertUserRequest{Fingerprint: fingerprint, ClientIP: host}
+		err = database.UpsertUser(ctx, request)
+
 		if err != nil {
 			return nil, []tea.ProgramOption{}
 		}
