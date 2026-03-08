@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"log"
 	"time"
+
+	"github.com/emyasa/yasaworks/internal/tracer"
 )
 
 type UpsertUserRequest struct {
@@ -13,6 +15,9 @@ type UpsertUserRequest struct {
 }
 
 func (db *DB) UpsertUser(ctx context.Context, r UpsertUserRequest) {
+	ctx, span := tracer.Start(ctx, "UpsertUser")
+	defer span.End()
+
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
