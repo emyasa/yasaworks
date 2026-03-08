@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/wish/activeterm"
 	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/emyasa/yasaworks/internal/db"
+	"github.com/emyasa/yasaworks/internal/tracer"
 	"github.com/emyasa/yasaworks/internal/tui"
 	"github.com/google/uuid"
 	gossh "golang.org/x/crypto/ssh"
@@ -54,6 +55,9 @@ func main() {
 
 func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	return func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
+		ctx, span := tracer.Start(s.Context(), "SSH Login")
+		defer span.End()
+
 		fingerprint := s.Context().Value("fingerprint").(string)
 		anonymous := s.Context().Value("anonymous").(bool)
 
@@ -62,7 +66,7 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 
 		if !anonymous {
 			request := db.UpsertUserRequest{Fingerprint: fingerprint, ClientIP: host}
-			database.UpsertUser(s.Context(), request)
+			database.UpsertUser(ctx, request)
 		}
 
 		model, err := tui.NewModel(database, fingerprint, anonymous, &host)
