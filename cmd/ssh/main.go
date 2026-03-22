@@ -11,6 +11,7 @@ import (
 	"github.com/charmbracelet/wish"
 	"github.com/charmbracelet/wish/activeterm"
 	"github.com/charmbracelet/wish/bubbletea"
+	"github.com/emyasa/yasaworks/internal/config"
 	"github.com/emyasa/yasaworks/internal/db"
 	"github.com/emyasa/yasaworks/internal/tracer"
 	"github.com/emyasa/yasaworks/internal/tui"
@@ -22,6 +23,7 @@ func main() {
 	db := db.New()
 	defer db.Close()
 
+	cfg := config.Load()
 	s, err := wish.NewServer(
 		wish.WithAddress(":22"),
 		wish.WithHostKeyPath(".ssh/host_key"),
@@ -43,6 +45,10 @@ func main() {
 				return true
 			},
 		),
+		wish.WithPasswordAuth(func (ctx ssh.Context, password string) bool {
+			ctx.SetValue("isAdmin", true)
+			return cfg.SshAdminPassword == password
+		}),
 	)
 
 	if err != nil {
@@ -57,6 +63,16 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 	return func(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 		ctx, span := tracer.Start(s.Context(), "SSH Login")
 		defer span.End()
+
+		isAdmin, ok := s.Context().Value("isAdmin").(bool)
+		if ok && isAdmin {
+			model, err := tui.NewModel(database, "fingerprint", false, nil)
+			if err != nil {
+				return nil, []tea.ProgramOption{}
+			}
+
+			return model, []tea.ProgramOption{tea.WithAltScreen()}
+		}
 
 		fingerprint := s.Context().Value("fingerprint").(string)
 		anonymous := s.Context().Value("anonymous").(bool)
