@@ -2,6 +2,8 @@
 package chat
 
 import (
+	"strings"
+
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -19,6 +21,7 @@ type Model struct {
 	theme theme.Theme
 	input textinput.Model
 	Mode mode
+	messages []string
 }
 
 func NewModel(theme theme.Theme) Model {
@@ -59,6 +62,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				return m, m.input.Cursor.BlinkCmd()
 			}
+		case "enter":
+			if text := m.input.Value(); text != "" {
+				m.messages = append(m.messages, text)
+				m.input.SetValue("")
+			}
 		}
 	}
 
@@ -73,6 +81,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
+	messsagesView := strings.Join(m.messages, "\n")
+
 	inputView := m.theme.Base().
 		MarginLeft(1).
 		Render(m.input.View())
@@ -86,7 +96,7 @@ func (m Model) View() string {
 		MarginLeft(1).
 		Render(modeString)
 
-	child := lipgloss.JoinVertical(lipgloss.Left, inputView, statusLine)
+	child := lipgloss.JoinVertical(lipgloss.Left, messsagesView, inputView, statusLine)
 
 	return lipgloss.Place(80, 24, lipgloss.Left, lipgloss.Bottom, child)
 }
