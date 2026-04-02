@@ -5,6 +5,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/emyasa/yasaworks/internal/db"
+	"github.com/emyasa/yasaworks/internal/tui/admin"
 	"github.com/emyasa/yasaworks/internal/tui/blog"
 	"github.com/emyasa/yasaworks/internal/tui/chat"
 	"github.com/emyasa/yasaworks/internal/tui/splash"
@@ -18,12 +19,14 @@ const (
 	blogPage
 	termsPage
 	chatPage
+	adminPage
 )
 
 type model struct {
 	db *db.DB
 	fingerprint string
 	anonymous bool
+	isAdmin bool
 	clientIP *string
 
 	theme theme.Theme
@@ -32,6 +35,7 @@ type model struct {
 	blog blog.Model
 	terms terms.Model
 	chat chat.Model
+	admin admin.Model
 
 	viewportWidth int
 	viewportHeight int
@@ -43,6 +47,7 @@ func NewModel(
 	db *db.DB,
 	fingerprint string,
 	anonymous bool,
+	isAdmin bool,
 	clientIP *string,
 ) (tea.Model, error) {
 	basicTheme := theme.BasicTheme()
@@ -53,6 +58,7 @@ func NewModel(
 		db: db,
 		fingerprint: fingerprint,
 		anonymous: anonymous,
+		isAdmin: isAdmin,
 		clientIP: clientIP,
 		theme: basicTheme,
 		page: splashPage,
@@ -60,6 +66,7 @@ func NewModel(
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
 		chat: chat.NewModel(basicTheme),
+		admin: admin.NewModel(basicTheme),
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
 	}, nil
@@ -75,6 +82,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.viewportWidth = msg.Width
 		m.viewportHeight = msg.Height
 	case splash.SplashCompleteMsg:
+		if m.isAdmin {
+			m.page = adminPage
+			return m, nil
+		}
+
 		m.page = blogPage
 	}
 
@@ -109,6 +121,8 @@ func (m model) View() string {
 	switch m.page {
 	case splashPage:
 		return m.splash.View()
+	case adminPage:
+		return m.admin.View()
 	default:
 		return m.layout(
 			m.headerView(),

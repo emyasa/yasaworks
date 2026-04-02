@@ -12,7 +12,7 @@ func main() {
 	db := db.New()
 	defer db.Close()
 
-	model, err := tui.NewModel(db, "fingerprint", false, nil)
+	model, err := tui.NewModel(db, "fingerprint", false, true, nil)
 	if err != nil {
 		panic(err)
 	}

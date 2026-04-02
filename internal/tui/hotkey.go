@@ -6,6 +6,18 @@ import (
 )
 
 func (m *model) hotKeyUpdate(msg tea.Msg) (tea.Cmd, bool) {
+	if m.isAdmin {
+		switch msg := msg.(type) {
+		case tea.KeyMsg:
+			switch msg.String() {
+			case "q":
+				return tea.Quit, true
+			}
+		}
+
+		return nil, false
+	}
+
 	mode := m.chat.Mode
 	if mode == chat.Insert {
 		return nil, false
