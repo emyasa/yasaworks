@@ -2,11 +2,17 @@ package tui
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/emyasa/yasaworks/internal/tui/admin"
 	"github.com/emyasa/yasaworks/internal/tui/chat"
 )
 
 func (m *model) hotKeyUpdate(msg tea.Msg) (tea.Cmd, bool) {
 	if m.isAdmin {
+		mode := m.admin.Mode
+		if mode == admin.Insert {
+			return nil, false
+		}
+
 		switch msg := msg.(type) {
 		case tea.KeyMsg:
 			switch msg.String() {

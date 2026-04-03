@@ -84,7 +84,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case splash.SplashCompleteMsg:
 		if m.isAdmin {
 			m.page = adminPage
-			return m, nil
+			return m, m.admin.Init()
 		}
 
 		m.page = blogPage
@@ -111,6 +111,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case chatPage:
 		var cmd tea.Cmd
 		m.chat, cmd = m.chat.Update(msg)
+		return m, cmd
+	case adminPage:
+		var cmd tea.Cmd
+		m.admin, cmd = m.admin.Update(msg)
 		return m, cmd
 	}
 
