@@ -5,6 +5,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/emyasa/yasaworks/internal/db"
+	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tui/admin"
 	"github.com/emyasa/yasaworks/internal/tui/blog"
 	"github.com/emyasa/yasaworks/internal/tui/chat"
@@ -49,6 +50,7 @@ func NewModel(
 	anonymous bool,
 	isAdmin bool,
 	clientIP *string,
+	conn *registry.Connection,
 ) (tea.Model, error) {
 	basicTheme := theme.BasicTheme()
 	widthContainer := 80
@@ -66,7 +68,7 @@ func NewModel(
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
 		chat: chat.NewModel(basicTheme),
-		admin: admin.NewModel(basicTheme),
+		admin: admin.NewModel(basicTheme, conn),
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
 	}, nil

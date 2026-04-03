@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
@@ -22,9 +23,10 @@ type Model struct {
 	theme theme.Theme
 	input textinput.Model
 	messages []string
+	conn *registry.Connection
 }
 
-func NewModel(theme theme.Theme) Model {
+func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
@@ -37,17 +39,29 @@ func NewModel(theme theme.Theme) Model {
 	return Model{
 		theme: theme,
 		input: ti,
+		conn: conn,
+	}
+}
+
+type clientMessage string
+
+func readFromChannel(conn *registry.Connection) tea.Cmd {
+	return func() tea.Msg {
+		return clientMessage(conn.FetchMessage())
 	}
 }
 
 func (m *Model) Init() tea.Cmd {
 	m.Mode = Insert
 	m.input.Focus()
-	return m.input.Cursor.BlinkCmd()
+	return tea.Batch(m.input.Cursor.BlinkCmd(), readFromChannel(m.conn))
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case clientMessage:
+		m.messages = append(m.messages, string(msg))
+		return m, readFromChannel(m.conn)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc":

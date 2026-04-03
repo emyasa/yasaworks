@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
 
@@ -66,6 +67,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			if text := m.input.Value(); text != "" {
 				m.messages = append(m.messages, text)
 				m.input.SetValue("")
+
+				registry.HandleClientMessage(text)
 			}
 		}
 	}

@@ -13,6 +13,7 @@ import (
 	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/emyasa/yasaworks/internal/config"
 	"github.com/emyasa/yasaworks/internal/db"
+	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tracer"
 	"github.com/emyasa/yasaworks/internal/tui"
 	"github.com/google/uuid"
@@ -66,7 +67,8 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 
 		isAdmin, ok := s.Context().Value("isAdmin").(bool)
 		if ok && isAdmin {
-			model, err := tui.NewModel(database, "fingerprint", false, true, nil)
+			conn := registry.RegisterAdminConnection(s.Context())
+			model, err := tui.NewModel(database, "fingerprint", false, true, nil, conn)
 			if err != nil {
 				return nil, []tea.ProgramOption{}
 			}
@@ -79,7 +81,7 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 
 		clientAddress := s.RemoteAddr().String()
 		host, _, _ := net.SplitHostPort(clientAddress)
-		model, err := tui.NewModel(database, fingerprint, anonymous, false, &host)
+		model, err := tui.NewModel(database, fingerprint, anonymous, false, &host, nil)
 
 		if anonymous {
 			if err != nil {
