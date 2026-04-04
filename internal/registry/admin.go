@@ -9,7 +9,11 @@ import (
 var adminConnRegistry = map[string]*Connection{}
 
 func RegisterAdminConnection(ctx context.Context) *Connection {
-	adminConn := &Connection{id: uuid.NewString(), messageChannel: make(chan string)}
+	adminConn := &Connection{
+		id: uuid.NewString(),
+		messageChannel: make(chan MessageEvent),
+	}
+
 	adminConnRegistry[adminConn.id] = adminConn
 	go func() {
 		<- ctx.Done()
@@ -20,10 +24,15 @@ func RegisterAdminConnection(ctx context.Context) *Connection {
 	return adminConn
 }
 
-func HandleClientMessage(message string) {
+func HandleClientMessage(conn *Connection, message string) {
+	messageEvent := MessageEvent{
+		Fingerprint: conn.fingerprint,
+		Message: message,
+	}
+
 	for _, conn := range adminConnRegistry {
 		select {
-		case conn.messageChannel <- message:
+		case conn.messageChannel <- messageEvent:
 		default:
 		}
 	}

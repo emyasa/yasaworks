@@ -81,7 +81,8 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 
 		clientAddress := s.RemoteAddr().String()
 		host, _, _ := net.SplitHostPort(clientAddress)
-		model, err := tui.NewModel(database, fingerprint, anonymous, false, &host, nil)
+		conn := registry.RegisterClientConnection(s.Context())
+		model, err := tui.NewModel(database, fingerprint, anonymous, false, &host, conn)
 
 		if anonymous {
 			if err != nil {

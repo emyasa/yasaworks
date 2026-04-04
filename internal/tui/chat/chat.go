@@ -20,12 +20,13 @@ const (
 
 type Model struct {
 	theme theme.Theme
+	conn *registry.Connection
 	input textinput.Model
 	Mode mode
 	messages []string
 }
 
-func NewModel(theme theme.Theme) Model {
+func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
@@ -37,6 +38,7 @@ func NewModel(theme theme.Theme) Model {
 
 	return Model{
 		theme: theme,
+		conn: conn,
 		input: ti,
 	}
 }
@@ -68,7 +70,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.messages = append(m.messages, text)
 				m.input.SetValue("")
 
-				registry.HandleClientMessage(text)
+				registry.HandleClientMessage(m.conn, text)
 			}
 		}
 	}

@@ -43,11 +43,11 @@ func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 	}
 }
 
-type clientMessage string
+type clientMessageEvent registry.MessageEvent
 
 func readFromChannel(conn *registry.Connection) tea.Cmd {
 	return func() tea.Msg {
-		return clientMessage(conn.FetchMessage())
+		return clientMessageEvent(conn.FetchMessage())
 	}
 }
 
@@ -59,8 +59,9 @@ func (m *Model) Init() tea.Cmd {
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case clientMessage:
-		m.messages = append(m.messages, string(msg))
+	case clientMessageEvent:
+		cMsgEvent := registry.MessageEvent(msg)
+		m.messages = append(m.messages, cMsgEvent.Message)
 		return m, readFromChannel(m.conn)
 	case tea.KeyMsg:
 		switch msg.String() {

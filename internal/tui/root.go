@@ -67,7 +67,7 @@ func NewModel(
 		splash: splash.NewModel(basicTheme),
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
-		chat: chat.NewModel(basicTheme),
+		chat: chat.NewModel(basicTheme, conn),
 		admin: admin.NewModel(basicTheme, conn),
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
