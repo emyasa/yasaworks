@@ -25,5 +25,16 @@ func TestUpdateConversations(t *testing.T) {
 	if !reflect.DeepEqual(expected, conversations) {
 		t.Errorf("expected: %+v, got %+v", expected, conversations)
 	}
+
+	for i, c := range conversations {
+		if idx, ok := conversationsIndex[c.fingerprint]; !ok || i != idx {
+			if !ok {
+				t.Errorf("index map not found for %s", c.fingerprint)
+				continue
+			}
+
+			t.Errorf("index map inconsistency for %s: expected %d, got %d", c.fingerprint, i, idx)
+		}
+	}
 }
 
