@@ -22,6 +22,8 @@ type Model struct {
 	Mode mode
 	theme theme.Theme
 	input textinput.Model
+	conversations []conversation
+	conversationsIndex map[string]int
 	messages []string
 	conn *registry.Connection
 }
@@ -40,6 +42,8 @@ func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 		theme: theme,
 		input: ti,
 		conn: conn,
+		conversations: []conversation{},
+		conversationsIndex: map[string]int{},
 	}
 }
 

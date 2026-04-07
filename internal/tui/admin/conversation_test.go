@@ -7,9 +7,11 @@ import (
 	"github.com/emyasa/yasaworks/internal/registry"
 )
 
-func resetState() {
-	conversations = []conversation{}
-	conversationsIndex = map[string]int{}
+func newModel() *Model {
+	return &Model{
+		conversations: []conversation{},
+		conversationsIndex: map[string]int{},
+	}
 }
 
 func TestUpdateConversations(t *testing.T) {
@@ -68,18 +70,18 @@ func TestUpdateConversations(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resetState()
+			m := newModel()
 
 			for _, e := range tt.events {
-				updateConversations(e)
+				m.updateConversations(e)
 			}
 
-			if !reflect.DeepEqual(tt.expected, conversations) {
-				t.Errorf("expected: %+v, got %+v", tt.expected, conversations)
+			if !reflect.DeepEqual(tt.expected, m.conversations) {
+				t.Errorf("expected: %+v, got %+v", tt.expected, m.conversations)
 			}
 
-			for i, c := range conversations {
-				if idx, ok := conversationsIndex[c.fingerprint]; !ok || i != idx {
+			for i, c := range m.conversations {
+				if idx, ok := m.conversationsIndex[c.fingerprint]; !ok || i != idx {
 					if !ok {
 						t.Errorf("index map not found for %s", c.fingerprint)
 						continue
