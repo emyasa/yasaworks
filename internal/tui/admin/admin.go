@@ -50,6 +50,10 @@ func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 type clientMessageEvent registry.MessageEvent
 
 func readFromChannel(conn *registry.Connection) tea.Cmd {
+	if conn == nil {
+		return nil
+	}
+
 	return func() tea.Msg {
 		return clientMessageEvent(conn.FetchMessage())
 	}
