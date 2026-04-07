@@ -29,6 +29,8 @@ func updateConversations(messageEvent registry.MessageEvent) {
 		for i := 0; i <= idx; i++ {
 			conversationsIndex[conversations[i].fingerprint] = i
 		}
+
+		return
 	}
 
 	conversations = append(conversations, conversation{})
