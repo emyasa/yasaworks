@@ -23,7 +23,7 @@ type Model struct {
 	conversations []conversation
 	conversationsIndex map[string]int
 	selectedConversationIndex int
-	messages []string
+	messages map[string][]string
 	conn *registry.Connection
 }
 
@@ -42,6 +42,7 @@ func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 		input: ti,
 		conn: conn,
 		conversationsIndex: map[string]int{},
+		messages: map[string][]string{},
 	}
 }
 
@@ -68,6 +69,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	case clientMessageEvent:
 		cMsgEvent := registry.MessageEvent(msg)
 		m.updateConversations(cMsgEvent)
+		m.updateChats(cMsgEvent, false)
 		return m, readFromChannel(m.conn)
 	case tea.KeyMsg:
 		switch msg.String() {

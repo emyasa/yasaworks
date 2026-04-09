@@ -1,8 +1,24 @@
 package admin
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"strings"
+
+	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/registry"
+)
+
+func (m Model) updateChats(messageEvent registry.MessageEvent, isSender bool) {
+	m.messages[messageEvent.Fingerprint] = append(m.messages[messageEvent.Fingerprint], messageEvent.Message)
+}
 
 func (m Model) chatPanelView() string {
+	var messagesView string
+	if len(m.conversations) > 0 {
+		selectedConversation := m.conversations[m.selectedConversationIndex]
+		messages := m.messages[selectedConversation.fingerprint]
+		messagesView = strings.Join(messages, "\n")
+	}
+
 	inputView := m.theme.Base().
 		MarginLeft(1).
 		Render(m.input.View())
@@ -16,7 +32,7 @@ func (m Model) chatPanelView() string {
 		MarginLeft(1).
 		Render(modeString)
 
-	child := lipgloss.JoinVertical(lipgloss.Left, inputView, statusLine)
+	child := lipgloss.JoinVertical(lipgloss.Left, messagesView, inputView, statusLine)
 
 	return lipgloss.Place(80, 23, lipgloss.Left, lipgloss.Bottom, child)
 }
