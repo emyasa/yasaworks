@@ -58,10 +58,15 @@ func (m Model) conversationsView() string {
 				Bold(true)
 		}
 
-		sb.WriteString(menuItemStyle.Render(c.fingerprint))
+		sb.WriteString(menuItemStyle.Render(c.fingerprint[:7]))
 		sb.WriteString("\n")
 
-		sb.WriteString(menuItemStyle.Render(c.message))
+		previewMessage := c.message
+		if len(previewMessage) > 12 {
+			previewMessage = c.message[0:12] + "..."
+		}
+
+		sb.WriteString(menuItemStyle.Render(previewMessage))
 		sb.WriteString("\n\n")
 	}
 
