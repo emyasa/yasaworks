@@ -43,14 +43,31 @@ func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 	}
 }
 
+type adminMessageEvent registry.MessageEvent
+
+func readFromChannel(conn *registry.Connection) tea.Cmd {
+	if conn == nil {
+		return nil
+	}
+
+	return func() tea.Msg {
+		return adminMessageEvent(conn.FetchMessage())
+	}
+}
+
 func (m *Model) Init() tea.Cmd {
 	m.Mode = Insert
 	m.input.Focus()
-	return m.input.Cursor.BlinkCmd()
+	return tea.Batch(m.input.Cursor.BlinkCmd(), readFromChannel(m.conn))
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case adminMessageEvent:
+		aMsgEvent := registry.MessageEvent(msg)
+		m.updateChats(aMsgEvent.Message, false)
+
+		return m, readFromChannel(m.conn)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc":
@@ -67,7 +84,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			}
 		case "enter":
 			if text := m.input.Value(); text != "" {
-				m.messages = append(m.messages, text)
+				m.updateChats(text, true)
 				m.input.SetValue("")
 
 				registry.HandleClientMessage(m.conn, text)
@@ -83,6 +100,16 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	m.input, cmd = m.input.Update(msg)
 
 	return m, cmd
+}
+
+func (m *Model) updateChats(message string, isSender bool) {
+	messagePosition := lipgloss.Left
+	if isSender {
+		messagePosition = lipgloss.Right
+	}
+
+	messageView := lipgloss.Place(80, 1, messagePosition, lipgloss.Bottom, message)
+	m.messages = append(m.messages, messageView)
 }
 
 func (m Model) View() string {

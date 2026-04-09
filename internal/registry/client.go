@@ -25,3 +25,16 @@ func RegisterClientConnection(ctx context.Context) *Connection {
 	return clientConn
 }
 
+func HandleAdminMessage(messageEvent MessageEvent) {
+	for _, conn := range clientConnRegistry {
+		if conn.fingerprint != messageEvent.Fingerprint {
+			continue
+		}
+
+		select {
+		case conn.messageChannel <- messageEvent:
+		default:
+		}
+	}
+}
+

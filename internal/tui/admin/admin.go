@@ -94,7 +94,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				}
 
 				m.input.SetValue("")
+
 				m.updateChats(messageEvent, true)
+				registry.HandleAdminMessage(messageEvent)
 			}
 		}
 	}
