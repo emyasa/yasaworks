@@ -1,6 +1,10 @@
 package admin
 
-import "github.com/emyasa/yasaworks/internal/registry"
+import (
+	"strings"
+
+	"github.com/emyasa/yasaworks/internal/registry"
+)
 
 type conversation struct {
 	fingerprint string
@@ -39,5 +43,28 @@ func (m *Model) updateConversations(messageEvent registry.MessageEvent) {
 	for i := 1; i < len(m.conversations); i++ {
 		m.conversationsIndex[m.conversations[i].fingerprint] = i
 	}
+}
+
+func (m Model) conversationsView() string {
+	sb := strings.Builder{}
+	for i, c := range m.conversations {
+		menuItemStyle := m.theme.Base().
+			Width(17).
+			Padding(0, 0, 0, 1)
+
+		if i == m.selectedConversationIndex {
+			menuItemStyle = menuItemStyle.Background(m.theme.Highlight()).
+				Foreground(m.theme.Accent()).
+				Bold(true)
+		}
+
+		sb.WriteString(menuItemStyle.Render(c.fingerprint))
+		sb.WriteString("\n")
+
+		sb.WriteString(menuItemStyle.Render(c.message))
+		sb.WriteString("\n\n")
+	}
+
+	return sb.String()
 }
 

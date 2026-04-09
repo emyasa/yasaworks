@@ -2,8 +2,6 @@
 package admin
 
 import (
-	"strings"
-
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -24,6 +22,7 @@ type Model struct {
 	input textinput.Model
 	conversations []conversation
 	conversationsIndex map[string]int
+	selectedConversationIndex int
 	messages []string
 	conn *registry.Connection
 }
@@ -42,7 +41,6 @@ func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 		theme: theme,
 		input: ti,
 		conn: conn,
-		conversations: []conversation{},
 		conversationsIndex: map[string]int{},
 	}
 }
@@ -69,7 +67,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case clientMessageEvent:
 		cMsgEvent := registry.MessageEvent(msg)
-		m.messages = append(m.messages, cMsgEvent.Message)
+		m.updateConversations(cMsgEvent)
 		return m, readFromChannel(m.conn)
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -99,22 +97,10 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	messagesView := strings.Join(m.messages, "\n")
-	inputView := m.theme.Base().
-		MarginLeft(1).
-		Render(m.input.View())
-
-	modeString := ""
-	if m.Mode == Insert {
-		modeString = "-- INSERT --"
-	}
-
-	statusLine := m.theme.Base().
-		MarginLeft(1).
-		Render(modeString)
-
-	child := lipgloss.JoinVertical(lipgloss.Left, messagesView, inputView, statusLine)
-
-	return lipgloss.Place(80, 24, lipgloss.Left, lipgloss.Bottom, child)
+	return lipgloss.JoinHorizontal(
+		lipgloss.Left,
+		m.conversationsView(),
+		m.chatPanelView(),
+	)
 }
 
