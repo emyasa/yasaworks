@@ -8,7 +8,13 @@ import (
 )
 
 func (m Model) updateChats(messageEvent registry.MessageEvent, isSender bool) {
-	m.messages[messageEvent.Fingerprint] = append(m.messages[messageEvent.Fingerprint], messageEvent.Message)
+	messagePosition := lipgloss.Left
+	if isSender {
+		messagePosition = lipgloss.Right
+	}
+
+	message := lipgloss.Place(80, 1, messagePosition, lipgloss.Bottom, messageEvent.Message)
+	m.messages[messageEvent.Fingerprint] = append(m.messages[messageEvent.Fingerprint], message)
 }
 
 func (m Model) chatPanelView() string {

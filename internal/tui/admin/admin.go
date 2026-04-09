@@ -85,6 +85,17 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				return m, m.input.Cursor.BlinkCmd()
 			}
+		case "enter":
+			if text := m.input.Value(); text != "" {
+				selectedConversation := m.conversations[m.selectedConversationIndex]
+				messageEvent := registry.MessageEvent{
+					Fingerprint: selectedConversation.fingerprint,
+					Message: text,
+				}
+
+				m.input.SetValue("")
+				m.updateChats(messageEvent, true)
+			}
 		}
 	}
 
