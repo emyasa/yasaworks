@@ -25,12 +25,13 @@ func (m Model) updateChats(messageEvent registry.MessageEvent, isSender bool) {
 }
 
 func (m Model) chatPanelView() string {
-	var messagesView string
-	if len(m.conversations) > 0 {
-		selectedConversation := m.conversations[m.selectedConversationIndex]
-		messages := m.messages[selectedConversation.fingerprint]
-		messagesView = strings.Join(messages, "\n")
+	if len(m.conversations) == 0 {
+		return "No messages. Press q to quit."
 	}
+
+	selectedConversation := m.conversations[m.selectedConversationIndex]
+	messages := m.messages[selectedConversation.fingerprint]
+	messagesView := strings.Join(messages, "\n")
 
 	inputView := m.theme.Base().
 		MarginLeft(1).

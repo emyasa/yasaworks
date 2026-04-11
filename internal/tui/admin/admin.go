@@ -59,7 +59,11 @@ func readFromChannel(conn *registry.Connection) tea.Cmd {
 }
 
 func (m *Model) Init() tea.Cmd {
-	m.Mode = Insert
+	m.Mode = Normal
+	if len(m.conversations) > 0 {
+		m.Mode = Insert
+	}
+
 	m.input.Focus()
 	return tea.Batch(m.input.Cursor.BlinkCmd(), readFromChannel(m.conn))
 }
