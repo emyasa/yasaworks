@@ -68,3 +68,23 @@ func (b Theme) Highlight() lipgloss.TerminalColor {
 	return b.highlight
 }
 
+func (b Theme) SenderBubbleStyle() lipgloss.Style {
+	return b.Base().
+		Background(lipgloss.Color("#2D5A27")).
+		Foreground(lipgloss.Color("#FFFFFF")).
+		Padding(0, 1)
+}
+
+func (b Theme) ReceiverBubbleStyle() lipgloss.Style {
+	return b.Base().
+		Background(lipgloss.Color("#3A3A3A")).
+		Foreground(lipgloss.Color("#E0E0E0")).
+		Padding(0, 1)
+}
+
+func (b Theme) TimestampStyle() lipgloss.Style {
+	return b.Base().
+		Foreground(lipgloss.Color("#666666")).
+		MarginLeft(1)
+}
+

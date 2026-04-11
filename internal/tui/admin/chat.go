@@ -2,18 +2,25 @@ package admin
 
 import (
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/registry"
 )
 
 func (m Model) updateChats(messageEvent registry.MessageEvent, isSender bool) {
-	messagePosition := lipgloss.Left
+	bubbleStyle := m.theme.ReceiverBubbleStyle()
+	position := lipgloss.Left
+
 	if isSender {
-		messagePosition = lipgloss.Right
+		bubbleStyle = m.theme.SenderBubbleStyle()
+		position = lipgloss.Right
 	}
 
-	message := lipgloss.Place(80, 1, messagePosition, lipgloss.Bottom, messageEvent.Message)
+	timestamp := time.Now().Format("15:04")
+	timestampView := m.theme.TimestampStyle().Render(timestamp)
+
+	message := lipgloss.Place(80, 1, position, lipgloss.Bottom, bubbleStyle.Render(messageEvent.Message) + timestampView)
 	m.messages[messageEvent.Fingerprint] = append(m.messages[messageEvent.Fingerprint], message)
 }
 
@@ -42,4 +49,3 @@ func (m Model) chatPanelView() string {
 
 	return lipgloss.Place(80, 23, lipgloss.Left, lipgloss.Bottom, child)
 }
-

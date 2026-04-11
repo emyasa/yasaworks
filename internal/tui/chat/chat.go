@@ -3,6 +3,7 @@ package chat
 
 import (
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"
@@ -103,12 +104,18 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m *Model) updateChats(message string, isSender bool) {
-	messagePosition := lipgloss.Left
+	bubbleStyle := m.theme.ReceiverBubbleStyle()
+	position := lipgloss.Left
+
 	if isSender {
-		messagePosition = lipgloss.Right
+		bubbleStyle = m.theme.SenderBubbleStyle()
+		position = lipgloss.Right
 	}
 
-	messageView := lipgloss.Place(80, 1, messagePosition, lipgloss.Bottom, message)
+	timestamp := time.Now().Format("15:04")
+	timestampView := m.theme.TimestampStyle().Render(timestamp)
+
+	messageView := lipgloss.Place(80, 1, position, lipgloss.Bottom, bubbleStyle.Render(message) + timestampView)
 	m.messages = append(m.messages, messageView)
 }
 
