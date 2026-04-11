@@ -25,6 +25,10 @@ func RegisterAdminConnection(ctx context.Context) *Connection {
 }
 
 func HandleClientMessage(conn *Connection, message string) {
+	if conn == nil {
+		return
+	}
+
 	messageEvent := MessageEvent{
 		Fingerprint: conn.fingerprint,
 		Message: message,
