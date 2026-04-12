@@ -36,7 +36,7 @@ type model struct {
 	blog blog.Model
 	terms terms.Model
 	chat chat.Model
-	admin admin.Model
+	admin *admin.Model
 
 	viewportWidth int
 	viewportHeight int
@@ -83,6 +83,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.viewportWidth = msg.Width
 		m.viewportHeight = msg.Height
+		m.admin.ViewportWidth = msg.Width
+		m.admin.ViewportHeight = msg.Height
 	case splash.SplashCompleteMsg:
 		if m.isAdmin {
 			m.page = adminPage

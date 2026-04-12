@@ -20,7 +20,7 @@ func (m Model) updateChats(messageEvent registry.MessageEvent, isSender bool) {
 	timestamp := time.Now().Format("15:04")
 	timestampView := m.theme.TimestampStyle().Render(timestamp)
 
-	message := lipgloss.Place(80, 1, position, lipgloss.Bottom, bubbleStyle.Render(messageEvent.Message) + timestampView)
+	message := lipgloss.Place(70, 1, position, lipgloss.Bottom, bubbleStyle.Render(messageEvent.Message) + timestampView)
 	m.messages[messageEvent.Fingerprint] = append(m.messages[messageEvent.Fingerprint], message)
 }
 
@@ -48,5 +48,5 @@ func (m Model) chatPanelView() string {
 
 	child := lipgloss.JoinVertical(lipgloss.Left, messagesView, inputView, statusLine)
 
-	return lipgloss.Place(80, 23, lipgloss.Left, lipgloss.Bottom, child)
+	return lipgloss.Place(70, 22, lipgloss.Left, lipgloss.Bottom, child)
 }

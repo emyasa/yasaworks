@@ -18,9 +18,10 @@ const (
 
 type Model struct {
 	Mode mode
+	ViewportWidth int
+	ViewportHeight int
+
 	theme theme.Theme
-	viewportWidth int
-	viewportHeight int
 	input textinput.Model
 	conversations []conversation
 	conversationsIndex map[string]int
@@ -29,7 +30,7 @@ type Model struct {
 	conn *registry.Connection
 }
 
-func NewModel(theme theme.Theme, conn *registry.Connection) Model {
+func NewModel(theme theme.Theme, conn *registry.Connection) *Model {
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
@@ -39,7 +40,7 @@ func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 	ti.TextStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("7"))
 	ti.Cursor.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
 
-	return Model{
+	return &Model{
 		theme: theme,
 		input: ti,
 		conn: conn,
@@ -70,15 +71,14 @@ func (m *Model) Init() tea.Cmd {
 	return tea.Batch(
 		m.input.Cursor.BlinkCmd(),
 		readFromChannel(m.conn),
-		tea.WindowSize(),
 	)
 }
 
-func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) (*Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.viewportWidth = msg.Width
-		m.viewportHeight = msg.Height
+		m.ViewportWidth = msg.Width
+		m.ViewportHeight = msg.Height
 	case clientMessageEvent:
 		cMsgEvent := registry.MessageEvent(msg)
 		m.updateConversations(cMsgEvent)
@@ -127,13 +127,15 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 func (m Model) View() string {
 	if len(m.conversations) == 0 {
 		prompt := "No messages. Press q to quit"
-		return lipgloss.Place(m.viewportWidth, m.viewportHeight, lipgloss.Center, lipgloss.Center, prompt)
+		return lipgloss.Place(m.ViewportWidth, m.ViewportHeight, lipgloss.Center, lipgloss.Center, prompt)
 	}
 
-	return lipgloss.JoinHorizontal(
+	layout := lipgloss.JoinHorizontal(
 		lipgloss.Left,
 		m.conversationsView(),
 		m.chatPanelView(),
 	)
+
+	return layout
 }
 
