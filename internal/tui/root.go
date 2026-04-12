@@ -71,7 +71,7 @@ func NewModel(
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
 		chat: chat.NewModel(ctx, db, basicTheme, conn),
-		admin: admin.NewModel(basicTheme, conn),
+		admin: admin.NewModel(ctx, db, basicTheme, conn),
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
 	}, nil
