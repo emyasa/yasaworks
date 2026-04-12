@@ -30,7 +30,7 @@ func HandleClientMessage(conn *Connection, message string) {
 	}
 
 	messageEvent := MessageEvent{
-		Fingerprint: conn.fingerprint,
+		Fingerprint: conn.Fingerprint,
 		Message: message,
 	}
 

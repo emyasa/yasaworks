@@ -8,7 +8,7 @@ type MessageEvent struct {
 
 type Connection struct {
 	id string
-	fingerprint string
+	Fingerprint string
 	messageChannel chan MessageEvent
 }
 

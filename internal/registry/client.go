@@ -11,7 +11,7 @@ var clientConnRegistry = map[string]*Connection{}
 func RegisterClientConnection(ctx context.Context) *Connection {
 	clientConn := &Connection{
 		id: uuid.NewString(),
-		fingerprint: ctx.Value("fingerprint").(string),
+		Fingerprint: ctx.Value("fingerprint").(string),
 		messageChannel: make(chan MessageEvent),
 	}
 
@@ -27,7 +27,7 @@ func RegisterClientConnection(ctx context.Context) *Connection {
 
 func HandleAdminMessage(messageEvent MessageEvent) {
 	for _, conn := range clientConnRegistry {
-		if conn.fingerprint != messageEvent.Fingerprint {
+		if conn.Fingerprint != messageEvent.Fingerprint {
 			continue
 		}
 

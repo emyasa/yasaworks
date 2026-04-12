@@ -2,6 +2,7 @@
 package chat
 
 import (
+	"context"
 	"strings"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/emyasa/yasaworks/internal/db"
 	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
@@ -20,6 +22,8 @@ const (
 )
 
 type Model struct {
+	ctx context.Context
+	db *db.DB
 	theme theme.Theme
 	conn *registry.Connection
 	input textinput.Model
@@ -27,7 +31,7 @@ type Model struct {
 	messages []string
 }
 
-func NewModel(theme theme.Theme, conn *registry.Connection) Model {
+func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.Connection) Model {
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
@@ -38,6 +42,8 @@ func NewModel(theme theme.Theme, conn *registry.Connection) Model {
 	ti.Cursor.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("2"))
 
 	return Model{
+		ctx: ctx,
+		db: db,
 		theme: theme,
 		conn: conn,
 		input: ti,
@@ -89,6 +95,13 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.input.SetValue("")
 
 				registry.HandleClientMessage(m.conn, text)
+
+				createMessageRequest := db.CreateMessageRequest{
+					ClientFingerprint: m.conn.Fingerprint,
+					SenderType: db.SenderClient,
+					Content: text,
+				}
+				m.db.CreateMessage(m.ctx, createMessageRequest)
 			}
 		}
 	}

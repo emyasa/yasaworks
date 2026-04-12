@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -12,7 +13,7 @@ func main() {
 	db := db.New()
 	defer db.Close()
 
-	model, err := tui.NewModel(db, "fingerprint", false, true, nil, nil)
+	model, err := tui.NewModel(context.Background(), db, "fingerprint", false, true, nil, nil)
 	if err != nil {
 		panic(err)
 	}

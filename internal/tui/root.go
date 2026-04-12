@@ -2,6 +2,8 @@
 package tui
 
 import (
+	"context"
+
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/emyasa/yasaworks/internal/db"
@@ -45,6 +47,7 @@ type model struct {
 }
 
 func NewModel(
+	ctx context.Context,
 	db *db.DB,
 	fingerprint string,
 	anonymous bool,
@@ -67,7 +70,7 @@ func NewModel(
 		splash: splash.NewModel(basicTheme),
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
-		chat: chat.NewModel(basicTheme, conn),
+		chat: chat.NewModel(ctx, db, basicTheme, conn),
 		admin: admin.NewModel(basicTheme, conn),
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
