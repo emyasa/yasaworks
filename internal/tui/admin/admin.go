@@ -2,6 +2,8 @@
 package admin
 
 import (
+	"time"
+
 	"github.com/charmbracelet/bubbles/cursor"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,6 +18,14 @@ const (
 	Insert
 )
 
+const ConversationsViewWidth = 17
+
+type message struct {
+	content string
+	timestamp time.Time
+	isFromSender bool
+}
+
 type Model struct {
 	Mode mode
 	ViewportWidth int
@@ -26,7 +36,7 @@ type Model struct {
 	conversations []conversation
 	conversationsIndex map[string]int
 	selectedConversationIndex int
-	messages map[string][]string
+	messages map[string][]message
 	conn *registry.Connection
 }
 
@@ -45,7 +55,7 @@ func NewModel(theme theme.Theme, conn *registry.Connection) *Model {
 		input: ti,
 		conn: conn,
 		conversationsIndex: map[string]int{},
-		messages: map[string][]string{},
+		messages: map[string][]message{},
 	}
 }
 
@@ -136,6 +146,6 @@ func (m Model) View() string {
 		m.chatPanelView(),
 	)
 
-	return layout
+	return lipgloss.Place(m.ViewportWidth, m.ViewportHeight, lipgloss.Center, lipgloss.Center, layout)
 }
 

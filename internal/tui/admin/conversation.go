@@ -49,7 +49,7 @@ func (m Model) conversationsView() string {
 	sb := strings.Builder{}
 	for i, c := range m.conversations {
 		menuItemStyle := m.theme.Base().
-			Width(17).
+			Width(ConversationsViewWidth).
 			Padding(0, 0, 0, 1)
 
 		if i == m.selectedConversationIndex {
