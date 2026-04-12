@@ -26,7 +26,7 @@ func (m Model) updateChats(messageEvent registry.MessageEvent, isSender bool) {
 
 func (m Model) chatPanelView() string {
 	if len(m.conversations) == 0 {
-		return "No messages. Press q to quit."
+		return ""
 	}
 
 	selectedConversation := m.conversations[m.selectedConversationIndex]

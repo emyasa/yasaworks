@@ -19,6 +19,8 @@ const (
 type Model struct {
 	Mode mode
 	theme theme.Theme
+	viewportWidth int
+	viewportHeight int
 	input textinput.Model
 	conversations []conversation
 	conversationsIndex map[string]int
@@ -65,11 +67,18 @@ func (m *Model) Init() tea.Cmd {
 	}
 
 	m.input.Focus()
-	return tea.Batch(m.input.Cursor.BlinkCmd(), readFromChannel(m.conn))
+	return tea.Batch(
+		m.input.Cursor.BlinkCmd(),
+		readFromChannel(m.conn),
+		tea.WindowSize(),
+	)
 }
 
 func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.viewportWidth = msg.Width
+		m.viewportHeight = msg.Height
 	case clientMessageEvent:
 		cMsgEvent := registry.MessageEvent(msg)
 		m.updateConversations(cMsgEvent)
@@ -116,6 +125,11 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
+	if len(m.conversations) == 0 {
+		prompt := "No messages. Press q to quit"
+		return lipgloss.Place(m.viewportWidth, m.viewportHeight, lipgloss.Center, lipgloss.Center, prompt)
+	}
+
 	return lipgloss.JoinHorizontal(
 		lipgloss.Left,
 		m.conversationsView(),
