@@ -21,6 +21,12 @@ const (
 	Insert
 )
 
+type message struct {
+	content string
+	timestamp time.Time
+	isFromSender bool
+}
+
 type Model struct {
 	ctx context.Context
 	db *db.DB
@@ -28,7 +34,7 @@ type Model struct {
 	conn *registry.Connection
 	input textinput.Model
 	Mode mode
-	messages []string
+	messages []message
 }
 
 func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.Connection) Model {
@@ -116,24 +122,34 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m *Model) updateChats(message string, isSender bool) {
-	bubbleStyle := m.theme.ReceiverBubbleStyle()
-	position := lipgloss.Left
-
-	if isSender {
-		bubbleStyle = m.theme.SenderBubbleStyle()
-		position = lipgloss.Right
+func (m *Model) updateChats(content string, isSender bool) {
+	message := message{
+		content: content,
+		timestamp: time.Now(),
+		isFromSender: isSender,
 	}
 
-	timestamp := time.Now().Format("15:04")
-	timestampView := m.theme.TimestampStyle().Render(timestamp)
-
-	messageView := lipgloss.Place(80, 1, position, lipgloss.Bottom, bubbleStyle.Render(message) + timestampView)
-	m.messages = append(m.messages, messageView)
+	m.messages = append(m.messages, message)
 }
 
 func (m Model) View() string {
-	messsagesView := strings.Join(m.messages, "\n")
+	sb := strings.Builder{}
+	for _, message := range m.messages {
+		bubbleStyle := m.theme.ReceiverBubbleStyle()
+		position := lipgloss.Left
+
+		if message.isFromSender {
+			bubbleStyle = m.theme.SenderBubbleStyle()
+			position = lipgloss.Right
+		}
+
+		timestamp := time.Now().Format("15:04")
+		timestampView := m.theme.TimestampStyle().Render(timestamp)
+
+		messageView := lipgloss.Place(80, 1, position, lipgloss.Bottom, bubbleStyle.Render(message.content) + timestampView)
+		sb.WriteString(messageView + "\n")
+	}
+	messagesView := sb.String()
 
 	inputView := m.theme.Base().
 		MarginLeft(1).
@@ -148,7 +164,7 @@ func (m Model) View() string {
 		MarginLeft(1).
 		Render(modeString)
 
-	child := lipgloss.JoinVertical(lipgloss.Left, messsagesView, inputView, statusLine)
+	child := lipgloss.JoinVertical(lipgloss.Left, messagesView, inputView, statusLine)
 
 	return lipgloss.Place(80, 24, lipgloss.Left, lipgloss.Bottom, child)
 }
