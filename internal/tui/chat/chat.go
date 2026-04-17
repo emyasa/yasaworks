@@ -38,6 +38,8 @@ type Model struct {
 }
 
 func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.Connection) Model {
+	messages, _ := db.ListMessages(ctx, conn.Fingerprint)
+
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
@@ -53,6 +55,7 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		theme: theme,
 		conn: conn,
 		input: ti,
+		messages: mapMessages(messages),
 	}
 }
 
@@ -143,7 +146,7 @@ func (m Model) View() string {
 			position = lipgloss.Right
 		}
 
-		timestamp := time.Now().Format("15:04")
+		timestamp := message.timestamp.Format("15:04")
 		timestampView := m.theme.TimestampStyle().Render(timestamp)
 
 		messageView := lipgloss.Place(80, 1, position, lipgloss.Bottom, bubbleStyle.Render(message.content) + timestampView)
