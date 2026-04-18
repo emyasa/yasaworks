@@ -18,3 +18,17 @@ func mapConversations(dbConversations []db.Conversation) ([]conversation, map[st
 
 	return conversations, conversationsIndex
 }
+
+func mapMessages(dbMessages []db.Message) []message {
+	messages := []message{}
+	for _, m := range dbMessages {
+		messages = append(messages, message{
+			content: m.Content,
+			timestamp: m.CreatedAt,
+			isFromSender: m.SenderType == db.SenderAdmin,
+		})
+	}
+
+	return messages
+}
+

@@ -48,6 +48,13 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 	dbConversations := db.ListConversations(ctx)
 	conversations, conversationsIndex := mapConversations(dbConversations)
 
+	messages := map[string][]message{}
+	if len(conversations) > 0 {
+		clientFingerprint := conversations[0].fingerprint
+		dbMessages, _ := db.ListMessages(ctx, clientFingerprint)
+		messages[clientFingerprint] = mapMessages(dbMessages)
+	}
+
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
@@ -65,7 +72,7 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		conn: conn,
 		conversations: conversations,
 		conversationsIndex: conversationsIndex,
-		messages: map[string][]message{},
+		messages: messages,
 	}
 }
 
