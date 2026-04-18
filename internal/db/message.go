@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/emyasa/yasaworks/internal/tracer"
@@ -24,6 +25,11 @@ type Message struct {
 	SenderType SenderType
 	Content string
 	CreatedAt time.Time
+}
+
+type Conversation struct {
+	ClientFingerprint string
+	LatestMessage string
 }
 
 func (db *DB) CreateMessage(ctx context.Context, r CreateMessageRequest) error {
@@ -73,5 +79,44 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string) ([]Mes
 	}
 
 	return messages, nil
+}
+
+func (db *DB) ListConversations(ctx context.Context) []Conversation {
+	ctx, span := tracer.Start(ctx, "ListConversations")
+	defer span.End()
+
+	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	defer cancel()
+
+	isAdmin, ok := ctx.Value("isAdmin").(bool)
+	if !ok || !isAdmin {
+		log.Fatal("Non admin clients should not be able to list conversations")
+	}
+
+	query := "SELECT client_fingerprint, content " +
+	"FROM (" +
+		"SELECT client_fingerprint, content, created_at, " +
+		"ROW_NUMBER () OVER (" +
+			"PARTITION BY client_fingerprint " +
+			"ORDER BY created_at DESC " +
+		") AS rn " +
+		"FROM messages " +
+	") WHERE rn = 1 " +
+	"ORDER BY created_at DESC"
+
+	rows, err := db.handle.QueryContext(ctx, query)
+	if err != nil {
+		log.Fatalf("ListConversations error %s", err)
+	}
+
+	conversations := []Conversation{}
+	for rows.Next() {
+		conversation := Conversation{}
+		rows.Scan(&conversation.ClientFingerprint, &conversation.LatestMessage)
+
+		conversations = append(conversations, conversation)
+	}
+
+	return conversations
 }
 

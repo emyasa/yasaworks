@@ -45,6 +45,9 @@ type Model struct {
 }
 
 func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.Connection) *Model {
+	dbConversations := db.ListConversations(ctx)
+	conversations, conversationsIndex := mapConversations(dbConversations)
+
 	ti := textinput.New()
 	ti.Prompt = "> "
 	ti.Placeholder = "type a message..."
@@ -60,7 +63,8 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		theme: theme,
 		input: ti,
 		conn: conn,
-		conversationsIndex: map[string]int{},
+		conversations: conversations,
+		conversationsIndex: conversationsIndex,
 		messages: map[string][]message{},
 	}
 }

@@ -59,6 +59,11 @@ func NewModel(
 	widthContainer := 80
 	heightContainer := 30
 
+	adminModel := &admin.Model{}
+	if isAdmin {
+		adminModel = admin.NewModel(ctx, db, basicTheme, conn)
+	}
+
 	return model{
 		db: db,
 		fingerprint: fingerprint,
@@ -71,7 +76,7 @@ func NewModel(
 		blog: blog.NewModel(basicTheme, widthContainer, heightContainer),
 		terms: terms.NewModel(basicTheme, widthContainer, heightContainer),
 		chat: chat.NewModel(ctx, db, basicTheme, conn),
-		admin: admin.NewModel(ctx, db, basicTheme, conn),
+		admin: adminModel,
 		widthContainer: widthContainer,
 		heightContainer: heightContainer,
 	}, nil
