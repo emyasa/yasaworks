@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/emyasa/yasaworks/internal/db"
+	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tui"
 )
 
@@ -13,7 +14,12 @@ func main() {
 	db := db.New()
 	defer db.Close()
 
-	model, err := tui.NewModel(context.Background(), db, nil)
+	type isAdminKey string
+	ctxKey := isAdminKey("isAdmin")
+	ctx := context.WithValue(context.Background(), ctxKey, false)
+
+	conn := &registry.Connection{}
+	model, err := tui.NewModel(ctx, db, conn)
 	if err != nil {
 		panic(err)
 	}
