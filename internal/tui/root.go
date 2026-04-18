@@ -49,7 +49,6 @@ type model struct {
 func NewModel(
 	ctx context.Context,
 	db *db.DB,
-	fingerprint string,
 	anonymous bool,
 	isAdmin bool,
 	clientIP *string,
@@ -66,7 +65,6 @@ func NewModel(
 
 	return model{
 		db: db,
-		fingerprint: fingerprint,
 		anonymous: anonymous,
 		isAdmin: isAdmin,
 		clientIP: clientIP,
