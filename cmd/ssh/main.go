@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/wish/activeterm"
 	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/emyasa/yasaworks/internal/config"
+	"github.com/emyasa/yasaworks/internal/ctxkeys"
 	"github.com/emyasa/yasaworks/internal/db"
 	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tracer"
@@ -47,7 +48,7 @@ func main() {
 			},
 		),
 		wish.WithPasswordAuth(func (ctx ssh.Context, password string) bool {
-			ctx.SetValue("isAdmin", true)
+			ctx.SetValue(ctxkeys.IsAdmin, true)
 			return cfg.SshAdminPassword == password
 		}),
 	)
@@ -65,7 +66,7 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 		ctx, span := tracer.Start(s.Context(), "SSH Login")
 		defer span.End()
 
-		isAdmin, ok := s.Context().Value("isAdmin").(bool)
+		isAdmin, ok := s.Context().Value(ctxkeys.IsAdmin).(bool)
 		if ok && isAdmin {
 			conn := registry.RegisterAdminConnection(s.Context())
 			model, err := tui.NewModel(s.Context(), database, conn)

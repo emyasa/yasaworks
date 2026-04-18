@@ -7,6 +7,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 
+	"github.com/emyasa/yasaworks/internal/ctxkeys"
 	"github.com/emyasa/yasaworks/internal/db"
 	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tui/admin"
@@ -62,7 +63,7 @@ func NewModel(
 	heightContainer := 30
 
 	adminModel := &admin.Model{}
-	isAdmin, ok := ctx.Value("isAdmin").(bool)
+	isAdmin, ok := ctx.Value(ctxkeys.IsAdmin).(bool)
 	if ok && isAdmin {
 		adminModel = admin.NewModel(ctx, db, basicTheme, conn)
 	}

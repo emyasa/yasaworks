@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/emyasa/yasaworks/internal/ctxkeys"
 	"github.com/emyasa/yasaworks/internal/tracer"
 )
 
@@ -88,7 +89,7 @@ func (db *DB) ListConversations(ctx context.Context) []Conversation {
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
-	isAdmin, ok := ctx.Value("isAdmin").(bool)
+	isAdmin, ok := ctx.Value(ctxkeys.IsAdmin).(bool)
 	if !ok || !isAdmin {
 		log.Fatal("Non admin clients should not be able to list conversations")
 	}
