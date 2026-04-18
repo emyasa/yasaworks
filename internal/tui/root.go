@@ -46,7 +46,6 @@ type model struct {
 func NewModel(
 	ctx context.Context,
 	db *db.DB,
-	isAdmin bool,
 	conn *registry.Connection,
 ) (tea.Model, error) {
 	basicTheme := theme.BasicTheme()
@@ -54,7 +53,8 @@ func NewModel(
 	heightContainer := 30
 
 	adminModel := &admin.Model{}
-	if isAdmin {
+	isAdmin, ok := ctx.Value("isAdmin").(bool)
+	if ok && isAdmin {
 		adminModel = admin.NewModel(ctx, db, basicTheme, conn)
 	}
 

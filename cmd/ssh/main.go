@@ -68,7 +68,7 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 		isAdmin, ok := s.Context().Value("isAdmin").(bool)
 		if ok && isAdmin {
 			conn := registry.RegisterAdminConnection(s.Context())
-			model, err := tui.NewModel(s.Context(), database, true, conn)
+			model, err := tui.NewModel(s.Context(), database, conn)
 			if err != nil {
 				return nil, []tea.ProgramOption{}
 			}
@@ -82,7 +82,7 @@ func teaHandler(database *db.DB) func(s ssh.Session) (tea.Model, []tea.ProgramOp
 		clientAddress := s.RemoteAddr().String()
 		host, _, _ := net.SplitHostPort(clientAddress)
 		conn := registry.RegisterClientConnection(s.Context())
-		model, err := tui.NewModel(s.Context(), database, false, conn)
+		model, err := tui.NewModel(s.Context(), database, conn)
 
 		if anonymous {
 			if err != nil {
