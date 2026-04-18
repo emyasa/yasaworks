@@ -3,6 +3,7 @@ package tui
 
 import (
 	"context"
+	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
 
@@ -48,6 +49,14 @@ func NewModel(
 	db *db.DB,
 	conn *registry.Connection,
 ) (tea.Model, error) {
+	if db == nil {
+		log.Fatal("tui's NewModel requires *db")
+	}
+
+	if conn == nil  {
+		log.Fatal("tui's NewModel requires *conn")
+	}
+
 	basicTheme := theme.BasicTheme()
 	widthContainer := 80
 	heightContainer := 30
