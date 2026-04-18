@@ -40,11 +40,11 @@ type Model struct {
 
 func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.Connection) Model {
 	if db == nil {
-		log.Fatal("db must be set")
+		log.Fatal("chat's Model requires *db")
 	}
 
 	if conn == nil {
-		log.Fatal("conn must be set")
+		log.Fatal("chat's Model requires *conn")
 	}
 
 	messages, _ := db.ListMessages(ctx, conn.Fingerprint)

@@ -28,7 +28,6 @@ const (
 type model struct {
 	db *db.DB
 	isAdmin bool
-	clientIP *string
 
 	theme theme.Theme
 	page page
@@ -48,7 +47,6 @@ func NewModel(
 	ctx context.Context,
 	db *db.DB,
 	isAdmin bool,
-	clientIP *string,
 	conn *registry.Connection,
 ) (tea.Model, error) {
 	basicTheme := theme.BasicTheme()
@@ -63,7 +61,6 @@ func NewModel(
 	return model{
 		db: db,
 		isAdmin: isAdmin,
-		clientIP: clientIP,
 		theme: basicTheme,
 		page: splashPage,
 		splash: splash.NewModel(basicTheme),
