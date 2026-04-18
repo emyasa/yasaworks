@@ -13,7 +13,7 @@ func main() {
 	db := db.New()
 	defer db.Close()
 
-	model, err := tui.NewModel(context.Background(), db, false, true, nil, nil)
+	model, err := tui.NewModel(context.Background(), db, false, nil, nil)
 	if err != nil {
 		panic(err)
 	}

@@ -3,6 +3,7 @@ package chat
 
 import (
 	"context"
+	"log"
 	"strings"
 	"time"
 
@@ -38,6 +39,14 @@ type Model struct {
 }
 
 func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.Connection) Model {
+	if db == nil {
+		log.Fatal("db must be set")
+	}
+
+	if conn == nil {
+		log.Fatal("conn must be set")
+	}
+
 	messages, _ := db.ListMessages(ctx, conn.Fingerprint)
 
 	ti := textinput.New()
