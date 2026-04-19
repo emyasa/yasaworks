@@ -15,7 +15,7 @@ func main() {
 	db := db.New()
 	defer db.Close()
 
-	ctx := context.WithValue(context.Background(), ctxkeys.IsAdmin, true)
+	ctx := context.WithValue(context.Background(), ctxkeys.IsAdmin, false)
 	conn := &registry.Connection{}
 	model, err := tui.NewModel(ctx, db, conn)
 	if err != nil {

@@ -21,6 +21,7 @@ type blogEntry struct {
 var entriesFS embed.FS
 var blogEntries = []*blogEntry{
 	{name: "Dev Workflow Journey", mdPath: "entries/dev-workflow.md", pinned: true},
+	{name: "04/19/2026 Go: Lit..", mdPath: "entries/04-19-2026.md"},
 	{name: "03/30/2026 Go: Con..", mdPath: "entries/03-30-2026.md"},
 	{name: "03/29/2026 Stripe:..", mdPath: "entries/03-29-2026.md"},
 	{name: "03/15/2026 Go: con..", mdPath: "entries/03-15-2026.md"},
