@@ -125,6 +125,10 @@ func (m *Model) Update(msg tea.Msg) (*Model, tea.Cmd) {
 
 				return m, m.input.Cursor.BlinkCmd()
 			}
+		case "tab", "j", "down":
+			m.moveToNextConversation()
+		case "shift+tab", "k", "up":
+			m.moveToPreviousConversation()
 		case "enter":
 			if text := m.input.Value(); text != "" {
 				selectedConversation := m.conversations[m.selectedConversationIndex]

@@ -11,6 +11,30 @@ type conversation struct {
 	message string
 }
 
+func (m *Model) moveToNextConversation() {
+	if m.Mode != Normal {
+		return
+	}
+
+	if m.selectedConversationIndex >= len(m.conversations) - 1 {
+		return
+	}
+
+	m.selectedConversationIndex += 1
+}
+
+func (m *Model) moveToPreviousConversation() {
+	if m.Mode != Normal {
+		return
+	}
+
+	if m.selectedConversationIndex <= 0 {
+		return
+	}
+
+	m.selectedConversationIndex -= 1
+}
+
 func (m *Model) updateConversations(messageEvent registry.MessageEvent) {
 	fp := messageEvent.Fingerprint
 	msg := messageEvent.Message
