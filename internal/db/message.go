@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/emyasa/yasaworks/internal/ctxkeys"
@@ -80,6 +81,64 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string) ([]Mes
 	}
 
 	return messages, nil
+}
+
+func (db *DB) ListMessagesByFPs(ctx context.Context, clientFingerprints [] string) []Message {
+	if len(clientFingerprints) == 0 {
+		log.Fatal("[db][messages] ListMessagesByFPs: clientFingerprints must not be empty")
+	}
+
+	ctx, span := tracer.Start(ctx, "ListMessagesMap")
+	defer span.End()
+
+	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	defer cancel()
+
+	isAdmin, ok := ctx.Value(ctxkeys.IsAdmin).(bool)
+	if !ok || !isAdmin {
+		log.Fatal("Non admin clients should not be able to list messages map")
+	}
+
+	placeholders := make([]string, len(clientFingerprints))
+	cfpsArgs := make([]any, len(clientFingerprints))
+	for i, fp := range clientFingerprints {
+		placeholders[i] = "?"
+		cfpsArgs[i] = fp
+	}
+
+	query := "SELECT client_fingerprint, sender_type, content, created_at " +
+	"FROM ( " +
+	"	SELECT client_fingerprint, sender_type, content, created_at, " +
+	"	ROW_NUMBER () OVER ( " +
+	"		PARTITION BY client_fingerprint " +
+	"	) AS rn " +
+	"	FROM messages " +
+	"	WHERE client_fingerprint IN (" + strings.Join(placeholders, ",") + ") " +
+	") WHERE rn <= 10 "
+
+	rows, err := db.handle.QueryContext(ctx, query, cfpsArgs...)
+	if err != nil {
+		log.Fatalf("ListMessagesMap error %s", err)
+	}
+
+	messages := []Message{}
+	for rows.Next() {
+		message := Message{}
+		var createdAt string
+
+		rows.Scan(
+			&message.ClientFingerprint,
+			&message.SenderType,
+			&message.Content,
+			&createdAt,
+		)
+
+		t, _ := time.Parse("2006-01-02 15:04:05", createdAt)
+		message.CreatedAt = t
+		messages = append(messages, message)
+	}
+
+	return messages
 }
 
 func (db *DB) ListConversations(ctx context.Context) []Conversation {

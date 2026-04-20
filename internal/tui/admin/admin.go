@@ -48,11 +48,15 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 	dbConversations := db.ListConversations(ctx)
 	conversations, conversationsIndex := mapConversations(dbConversations)
 
+	cfps := []string{}
+	for _, c := range conversations {
+		cfps = append(cfps, c.fingerprint)
+	}
+
 	messages := map[string][]message{}
-	if len(conversations) > 0 {
-		clientFingerprint := conversations[0].fingerprint
-		dbMessages, _ := db.ListMessages(ctx, clientFingerprint)
-		messages[clientFingerprint] = mapMessages(dbMessages)
+	if len(cfps) > 0 {
+		dbMessages := db.ListMessagesByFPs(ctx, cfps)
+		messages = mapMessages(dbMessages)
 	}
 
 	ti := textinput.New()

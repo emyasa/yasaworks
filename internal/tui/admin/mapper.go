@@ -19,16 +19,18 @@ func mapConversations(dbConversations []db.Conversation) ([]conversation, map[st
 	return conversations, conversationsIndex
 }
 
-func mapMessages(dbMessages []db.Message) []message {
-	messages := []message{}
+func mapMessages(dbMessages []db.Message) map[string][]message {
+	messagesMap := map[string][]message{}
 	for _, m := range dbMessages {
-		messages = append(messages, message{
+		message :=  message{
 			content: m.Content,
 			timestamp: m.CreatedAt,
 			isFromSender: m.SenderType == db.SenderAdmin,
-		})
+		}
+
+		messagesMap[m.ClientFingerprint] = append(messagesMap[m.ClientFingerprint], message)
 	}
 
-	return messages
+	return messagesMap
 }
 
