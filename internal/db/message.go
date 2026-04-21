@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"log"
+	"slices"
 	"strings"
 	"time"
 
@@ -53,7 +54,13 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string) ([]Mes
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
-	rows, err := db.handle.QueryContext(ctx, "SELECT client_fingerprint, sender_type, content, created_at FROM messages WHERE client_fingerprint = ?", clientFingerprint)
+	query := "SELECT client_fingerprint, sender_type, content, created_at " +
+	"FROM messages " +
+	"WHERE client_fingerprint = ? " +
+	"ORDER BY created_at DESC " +
+	"LIMIT 20"
+
+	rows, err := db.handle.QueryContext(ctx, query, clientFingerprint)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +87,7 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string) ([]Mes
 		messages = append(messages, message)
 	}
 
+	slices.Reverse(messages)
 	return messages, nil
 }
 

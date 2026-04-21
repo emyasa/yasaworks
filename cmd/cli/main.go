@@ -15,8 +15,8 @@ func main() {
 	db := db.New()
 	defer db.Close()
 
-	ctx := context.WithValue(context.Background(), ctxkeys.IsAdmin, true)
-	conn := &registry.Connection{}
+	ctx := context.WithValue(context.Background(), ctxkeys.IsAdmin, false)
+	conn := &registry.Connection{Fingerprint: "4e4aa06501547c64cbbe41c5fa7a7b67"}
 	model, err := tui.NewModel(ctx, db, conn)
 	if err != nil {
 		panic(err)
