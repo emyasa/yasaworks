@@ -136,15 +136,17 @@ func (db *DB) ListMessagesByFPs(ctx context.Context, clientFingerprints [] strin
 		cfpsArgs[i] = fp
 	}
 
-	query := "SELECT client_fingerprint, sender_type, content, created_at " +
-	"FROM ( " +
-	"	SELECT client_fingerprint, sender_type, content, created_at, " +
-	"	ROW_NUMBER () OVER ( " +
-	"		PARTITION BY client_fingerprint " +
-	"	) AS rn " +
-	"	FROM messages " +
-	"	WHERE client_fingerprint IN (" + strings.Join(placeholders, ",") + ") " +
-	") WHERE rn <= 10 "
+	query := `
+	SELECT client_fingerprint, sender_type, content, created_at
+	FROM (
+		SELECT client_fingerprint, sender_type, content, created_at,
+		ROW_NUMBER () OVER (
+			PARTITION BY client_fingerprint
+		) AS rn
+		FROM messages
+		WHERE client_fingerprint IN (` + strings.Join(placeholders, ",") + `)
+		ORDER BY created_at DESC
+	) WHERE rn <= 30`
 
 	rows, err := db.handle.QueryContext(ctx, query, cfpsArgs...)
 	if err != nil {
@@ -168,6 +170,7 @@ func (db *DB) ListMessagesByFPs(ctx context.Context, clientFingerprints [] strin
 		messages = append(messages, message)
 	}
 
+	slices.Reverse(messages)
 	return messages
 }
 
