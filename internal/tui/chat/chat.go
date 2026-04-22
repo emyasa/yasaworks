@@ -47,7 +47,10 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		log.Fatal("chat's NewModel requires *conn")
 	}
 
-	messages, _ := db.ListMessages(ctx, conn.Fingerprint)
+	messages, err := db.ListMessages(ctx, conn.Fingerprint, nil)
+	if err != nil {
+		log.Fatalf("chat's NewModel error: %s", err)
+	}
 
 	ti := textinput.New()
 	ti.Prompt = "> "

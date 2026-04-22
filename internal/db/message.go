@@ -30,6 +30,11 @@ type Message struct {
 	CreatedAt time.Time
 }
 
+type MessageCursor struct {
+	CreatedAt time.Time
+	ID int64
+}
+
 type Conversation struct {
 	ClientFingerprint string
 	LatestMessage string
@@ -47,20 +52,37 @@ func (db *DB) CreateMessage(ctx context.Context, r CreateMessageRequest) error {
 	return nil
 }
 
-func (db *DB) ListMessages(ctx context.Context, clientFingerprint string) ([]Message, error) {
+func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor *MessageCursor) ([]Message, error) {
 	ctx, span := tracer.Start(ctx, "ListMessages")
 	defer span.End()
 
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 
-	query := "SELECT client_fingerprint, sender_type, content, created_at " +
-	"FROM messages " +
-	"WHERE client_fingerprint = ? " +
-	"ORDER BY created_at DESC " +
-	"LIMIT 20"
+	query := `
+	SELECT client_fingerprint, sender_type, content, created_at
+	FROM messages
+	WHERE client_fingerprint = ?`
 
-	rows, err := db.handle.QueryContext(ctx, query, clientFingerprint)
+	args := []any{clientFingerprint}
+
+	if cursor != nil {
+		query += `
+		AND created_at < ?
+		OR (create_at == ? AND id < ?)`
+
+		args = append(args,
+			cursor.CreatedAt.Format("2006-01-02 15:04:05"),
+			cursor.CreatedAt.Format("2006-01-02 15:04:05"),
+			cursor.ID,
+		)
+	}
+
+	query += `
+	ORDER BY created_at DESC, id DESC
+	LIMIT 20`
+
+	rows, err := db.handle.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
