@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -12,6 +13,8 @@ import (
 )
 
 func main() {
+	log.SetOutput(io.Discard)
+
 	db := db.New()
 	defer db.Close()
 
