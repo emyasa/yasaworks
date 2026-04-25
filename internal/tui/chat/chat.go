@@ -35,6 +35,8 @@ type Model struct {
 	conn *registry.Connection
 	input textinput.Model
 	Mode mode
+	messagesCursorIndex int
+	messagesWindowSize int
 	messages []message
 }
 
@@ -67,6 +69,8 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		theme: theme,
 		conn: conn,
 		input: ti,
+		messagesCursorIndex: len(messages) - 1,
+		messagesWindowSize: 20,
 		messages: mapMessages(messages),
 	}
 }
@@ -145,11 +149,13 @@ func (m *Model) updateChats(content string, isSender bool) {
 	}
 
 	m.messages = append(m.messages, message)
+	m.messagesCursorIndex = len(m.messages) - 1
 }
 
 func (m Model) View() string {
 	sb := strings.Builder{}
-	for _, message := range m.messages {
+	messages := m.messages[m.messagesCursorIndex - m.messagesWindowSize + 1: m.messagesCursorIndex + 1]
+	for _, message := range messages {
 		bubbleStyle := m.theme.ReceiverBubbleStyle()
 		position := lipgloss.Left
 
@@ -161,7 +167,7 @@ func (m Model) View() string {
 		timestamp := message.timestamp.Format("15:04")
 		timestampView := m.theme.TimestampStyle().Render(timestamp)
 
-		messageView := lipgloss.Place(80, 1, position, lipgloss.Bottom, bubbleStyle.Render(message.content) + timestampView)
+		messageView := lipgloss.PlaceHorizontal(80, position, bubbleStyle.Render(message.content) + timestampView)
 		sb.WriteString(messageView + "\n")
 	}
 	messagesView := sb.String()
