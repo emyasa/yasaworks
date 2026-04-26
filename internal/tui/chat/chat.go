@@ -165,8 +165,10 @@ func (m *Model) updateChats(content string, isSender bool) {
 }
 
 func (m Model) View() string {
+	windowStart := max(0, m.messagesCursorIndex - m.messagesWindowSize + 1)
+	messages := m.messages[windowStart : m.messagesCursorIndex + 1]
+
 	sb := strings.Builder{}
-	messages := m.messages[m.messagesCursorIndex - m.messagesWindowSize + 1: m.messagesCursorIndex + 1]
 	for _, message := range messages {
 		bubbleStyle := m.theme.ReceiverBubbleStyle()
 		position := lipgloss.Left
