@@ -32,7 +32,6 @@ type Message struct {
 
 type MessageCursor struct {
 	CreatedAt time.Time
-	ID int64
 }
 
 type Conversation struct {
@@ -72,8 +71,6 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor
 
 		args = append(args,
 			cursor.CreatedAt.Format("2006-01-02 15:04:05"),
-			cursor.CreatedAt.Format("2006-01-02 15:04:05"),
-			cursor.ID,
 		)
 	}
 

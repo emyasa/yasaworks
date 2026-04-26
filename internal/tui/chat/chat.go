@@ -22,6 +22,11 @@ const (
 	Insert
 )
 
+const (
+	messagesBufferSize = 20
+	messagesWindowSize = 5
+)
+
 type message struct {
 	content string
 	timestamp time.Time
@@ -36,7 +41,6 @@ type Model struct {
 	input textinput.Model
 	Mode mode
 	messagesCursorIndex int
-	messagesWindowSize int
 	messages []message
 }
 
@@ -70,7 +74,6 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		conn: conn,
 		input: ti,
 		messagesCursorIndex: len(messages) - 1,
-		messagesWindowSize: 20,
 		messages: mapMessages(messages),
 	}
 }
@@ -115,17 +118,17 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				return m, m.input.Cursor.BlinkCmd()
 			}
 		case "k":
-			if m.Mode == Normal && m.messagesCursorIndex - m.messagesWindowSize >= 0 {
+			if m.Mode == Normal && m.messagesCursorIndex - messagesWindowSize >= 0 {
 				m.messagesCursorIndex--
-				if m.messagesCursorIndex < (len(m.messages) / 2) {
-					message := m.messages[m.messagesCursorIndex + m.messagesWindowSize]
+				if len(m.messages) == messagesBufferSize &&  m.messagesCursorIndex < (len(m.messages) / 2) {
+					message := m.messages[m.messagesCursorIndex + messagesWindowSize]
 					messages, err := m.db.ListMessages(m.ctx, m.conn.Fingerprint, &db.MessageCursor{CreatedAt: message.timestamp})
 					if err != nil {
 						log.Fatalf("error: %s", err)
 					}
 
 					m.messages = mapMessages(messages)
-					m.messagesCursorIndex += m.messagesWindowSize
+					m.messagesCursorIndex += messagesWindowSize
 				}
 			}
 		case "j":
@@ -171,7 +174,7 @@ func (m *Model) updateChats(content string, isSender bool) {
 }
 
 func (m Model) View() string {
-	windowStart := max(0, m.messagesCursorIndex - m.messagesWindowSize + 1)
+	windowStart := max(0, m.messagesCursorIndex - messagesWindowSize + 1)
 	messages := m.messages[windowStart : m.messagesCursorIndex + 1]
 
 	sb := strings.Builder{}
