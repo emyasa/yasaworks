@@ -68,8 +68,7 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor
 
 	if cursor != nil {
 		query += `
-		AND created_at < ?
-		OR (create_at == ? AND id < ?)`
+		AND created_at <= ?`
 
 		args = append(args,
 			cursor.CreatedAt.Format("2006-01-02 15:04:05"),
