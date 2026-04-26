@@ -114,6 +114,18 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 				return m, m.input.Cursor.BlinkCmd()
 			}
+		case "k":
+			if m.Mode == Normal && m.messagesCursorIndex - m.messagesWindowSize >= 0 {
+				m.messagesCursorIndex--
+
+				return m, nil
+			}
+		case "j":
+			if m.Mode == Normal && m.messagesCursorIndex < len(m.messages) - 1 {
+				m.messagesCursorIndex++
+
+				return m, nil
+			}
 		case "enter":
 			if text := m.input.Value(); text != "" {
 				m.updateChats(text, true)
@@ -149,7 +161,7 @@ func (m *Model) updateChats(content string, isSender bool) {
 	}
 
 	m.messages = append(m.messages, message)
-	m.messagesCursorIndex = len(m.messages) - 1
+	m.messagesCursorIndex++
 }
 
 func (m Model) View() string {
