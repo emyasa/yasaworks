@@ -69,7 +69,7 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor
 	if cursor != nil {
 		cursorQuery := "AND created_at <= ?"
 		if cursor.FetchNext {
-			cursorQuery = "AND created at >= ?"
+			cursorQuery = "AND created_at >= ?"
 		}
 		query += cursorQuery
 
