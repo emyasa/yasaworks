@@ -129,6 +129,9 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 
 					m.messages = mapMessages(messages)
 					m.messagesCursorIndex += messagesWindowSize
+					if (len(m.messages) != messagesBufferSize) {
+						m.messagesCursorIndex = len(m.messages) - messagesWindowSize - 1
+					}
 				}
 			}
 		case "j":
