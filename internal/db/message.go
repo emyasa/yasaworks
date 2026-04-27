@@ -32,6 +32,7 @@ type Message struct {
 
 type MessageCursor struct {
 	CreatedAt time.Time
+	FetchNext bool
 }
 
 type Conversation struct {
@@ -66,8 +67,11 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor
 	args := []any{clientFingerprint}
 
 	if cursor != nil {
-		query += `
-		AND created_at <= ?`
+		cursorQuery := "AND created_at <= ?"
+		if cursor.FetchNext {
+			cursorQuery = "AND created at >= ?"
+		}
+		query += cursorQuery
 
 		args = append(args,
 			cursor.CreatedAt.Format("2006-01-02 15:04:05"),
