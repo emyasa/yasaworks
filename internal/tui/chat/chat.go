@@ -120,7 +120,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "k":
 			if m.Mode == Normal && m.messagesCursorIndex - messagesWindowSize >= 0 {
 				m.messagesCursorIndex--
-				if len(m.messages) == messagesBufferSize &&  m.messagesCursorIndex < (len(m.messages) / 2) {
+				if len(m.messages) == messagesBufferSize && m.messagesCursorIndex < (len(m.messages) / 2) {
 					message := m.messages[m.messagesCursorIndex + messagesWindowSize]
 					messages, err := m.db.ListMessages(m.ctx, m.conn.Fingerprint, &db.MessageCursor{CreatedAt: message.timestamp})
 					if err != nil {
