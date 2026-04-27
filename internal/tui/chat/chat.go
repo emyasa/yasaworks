@@ -137,6 +137,16 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "j":
 			if m.Mode == Normal && m.messagesCursorIndex < len(m.messages) - 1 {
 				m.messagesCursorIndex++
+				if len(m.messages) == messagesBufferSize && m.messagesCursorIndex > (len(m.messages) / 2) {
+					message := m.messages[messagesWindowSize]
+					messages, err := m.db.ListMessages(m.ctx, m.conn.Fingerprint, &db.MessageCursor{CreatedAt: message.timestamp, FetchNext: true})
+					if err != nil {
+						log.Fatalf("error: %s", err)
+					}
+
+					m.messages = mapMessages(messages)
+					m.messagesCursorIndex -= messagesWindowSize
+				}
 			}
 		case "enter":
 			if text := m.input.Value(); text != "" {
