@@ -42,6 +42,8 @@ type Model struct {
 	Mode mode
 	messagesCursorIndex int
 	messages []message
+	hasReachedStart bool
+	hasReachedEnd bool
 }
 
 func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.Connection) Model {
@@ -120,7 +122,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		case "k":
 			if m.Mode == Normal && m.messagesCursorIndex - messagesWindowSize >= 0 {
 				m.messagesCursorIndex--
-				if len(m.messages) == messagesBufferSize && m.messagesCursorIndex < (len(m.messages) / 2) {
+				if !m.hasReachedStart && m.messagesCursorIndex < (len(m.messages) / 2) {
 					message := m.messages[m.messagesCursorIndex + messagesWindowSize]
 					messages, err := m.db.ListMessages(m.ctx, m.conn.Fingerprint, &db.MessageCursor{CreatedAt: message.timestamp})
 					if err != nil {
@@ -131,21 +133,35 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 					m.messagesCursorIndex += messagesWindowSize
 					if (len(m.messages) != messagesBufferSize) {
 						m.messagesCursorIndex = len(m.messages) - messagesWindowSize - 1
+						m.hasReachedStart = true
+					}
+
+					if m.hasReachedEnd {
+						m.hasReachedEnd = false
 					}
 				}
 			}
 		case "j":
 			if m.Mode == Normal && m.messagesCursorIndex < len(m.messages) - 1 {
 				m.messagesCursorIndex++
-				if len(m.messages) == messagesBufferSize && m.messagesCursorIndex > (len(m.messages) / 2) {
+				if !m.hasReachedEnd && m.messagesCursorIndex > (len(m.messages) / 2) {
 					message := m.messages[messagesWindowSize]
+					if m.hasReachedStart {
+						message = m.messages[0]
+						m.hasReachedStart = false
+					} else {
+						m.messagesCursorIndex -= messagesWindowSize
+					}
+
 					messages, err := m.db.ListMessages(m.ctx, m.conn.Fingerprint, &db.MessageCursor{CreatedAt: message.timestamp, FetchNext: true})
 					if err != nil {
 						log.Fatalf("error: %s", err)
 					}
 
 					m.messages = mapMessages(messages)
-					m.messagesCursorIndex -= messagesWindowSize
+					if (len(m.messages) != messagesBufferSize) {
+						m.hasReachedEnd = true
+					}
 				}
 			}
 		case "enter":
