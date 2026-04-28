@@ -78,9 +78,13 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor
 		)
 	}
 
-	query += `
-	ORDER BY created_at DESC, id DESC
-	LIMIT 20`
+	cursorQuery := "ORDER BY created_at DESC, id DESC "
+	if cursor != nil && cursor.FetchNext {
+		cursorQuery = "ORDER BY created_at ASC, id DESC "
+	}
+
+	query += cursorQuery
+	query += "LIMIT 20"
 
 	rows, err := db.handle.QueryContext(ctx, query, args...)
 	if err != nil {
@@ -109,7 +113,10 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor
 		messages = append(messages, message)
 	}
 
-	slices.Reverse(messages)
+	if cursor == nil || !cursor.FetchNext {
+		slices.Reverse(messages)
+	}
+
 	return messages, nil
 }
 
