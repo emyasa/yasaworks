@@ -120,26 +120,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				return m, m.input.Cursor.BlinkCmd()
 			}
 		case "k":
-			if m.Mode == Normal && m.messagesCursorIndex - messagesWindowSize >= 0 {
-				m.messagesCursorIndex--
-				if !m.hasReachedStart && m.messagesCursorIndex < (len(m.messages) / 2) {
-					message := m.messages[m.messagesCursorIndex + messagesWindowSize]
-					messages, err := m.db.ListMessages(m.ctx, m.conn.Fingerprint, &db.MessageCursor{CreatedAt: message.timestamp})
-					if err != nil {
-						log.Fatalf("error: %s", err)
-					}
-
-					m.messages = mapMessages(messages)
-					m.messagesCursorIndex += messagesWindowSize
-					if (len(m.messages) != messagesBufferSize) {
-						m.messagesCursorIndex = len(m.messages) - messagesWindowSize - 1
-						m.hasReachedStart = true
-					}
-
-					if m.hasReachedEnd {
-						m.hasReachedEnd = false
-					}
-				}
+			if m.canScrollUp() {
+				m.scrollUp()
 			}
 		case "j":
 			if m.Mode == Normal && m.messagesCursorIndex < len(m.messages) - 1 {
