@@ -45,6 +45,7 @@ type Model struct {
 	messages []message
 	hasReachedStart bool
 	hasReachedEnd bool
+	modeString string
 }
 
 func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.Connection) Model {
@@ -110,11 +111,13 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "esc":
 			if m.Mode == Insert {
+				m.modeString = ""
 				m.Mode = Normal
 				m.input.Cursor.SetMode(cursor.CursorStatic)
 			}
 		case "i":
 			if m.Mode == Normal {
+				m.modeString = "-- INSERT --"
 				m.Mode = Insert
 				m.input.Cursor.SetMode(cursor.CursorBlink)
 
@@ -142,6 +145,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 					Content: text,
 				}
 				m.db.CreateMessage(m.ctx, createMessageRequest)
+			} else {
+				m.modeString = "Rate Limit Reached."
 			}
 		}
 	}
@@ -193,16 +198,16 @@ func (m Model) View() string {
 		MarginLeft(1).
 		Render(m.input.View())
 
-	modeString := ""
-	if m.Mode == Insert {
-		modeString = "-- INSERT --"
-	}
-
 	statusLine := m.theme.Base().
 		MarginLeft(1).
-		Render(modeString)
+		Render(m.modeString)
 
-	child := lipgloss.JoinVertical(lipgloss.Left, messagesView, inputView, statusLine)
+	child := lipgloss.JoinVertical(
+		lipgloss.Left,
+		messagesView,
+		inputView,
+		statusLine,
+	)
 
 	return lipgloss.Place(80, 24, lipgloss.Left, lipgloss.Bottom, child)
 }
