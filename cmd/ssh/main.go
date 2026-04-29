@@ -44,7 +44,7 @@ func main() {
 			func(ctx ssh.Context, challenger gossh.KeyboardInteractiveChallenge) bool {
 				ctx.SetValue("fingerprint", uuid.NewString())
 				ctx.SetValue("anonymous", true)
-				return true
+				return cfg.AllowAnonymous
 			},
 		),
 		wish.WithPasswordAuth(func (ctx ssh.Context, password string) bool {
