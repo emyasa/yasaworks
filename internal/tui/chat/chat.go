@@ -12,6 +12,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/emyasa/yasaworks/internal/db"
+	rl "github.com/emyasa/yasaworks/internal/ratelimiter"
 	"github.com/emyasa/yasaworks/internal/registry"
 	"github.com/emyasa/yasaworks/internal/tui/theme"
 )
@@ -128,7 +129,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.scrollDown()
 			}
 		case "enter":
-			if text := m.input.Value(); text != "" {
+			allow := rl.Allow(m.conn.Fingerprint)
+			if text := m.input.Value(); text != "" && allow {
 				m.updateChats(text, true)
 				m.input.SetValue("")
 
