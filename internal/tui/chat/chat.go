@@ -124,27 +124,8 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 				m.scrollUp()
 			}
 		case "j":
-			if m.Mode == Normal && m.messagesCursorIndex < len(m.messages) - 1 {
-				m.messagesCursorIndex++
-				if !m.hasReachedEnd && m.messagesCursorIndex > (len(m.messages) / 2) {
-					message := m.messages[messagesWindowSize]
-					if m.hasReachedStart {
-						message = m.messages[0]
-						m.hasReachedStart = false
-					} else {
-						m.messagesCursorIndex -= messagesWindowSize
-					}
-
-					messages, err := m.db.ListMessages(m.ctx, m.conn.Fingerprint, &db.MessageCursor{CreatedAt: message.timestamp, FetchNext: true})
-					if err != nil {
-						log.Fatalf("error: %s", err)
-					}
-
-					m.messages = mapMessages(messages)
-					if (len(m.messages) != messagesBufferSize) {
-						m.hasReachedEnd = true
-					}
-				}
+			if m.canScrollDown() {
+				m.scrollDown()
 			}
 		case "enter":
 			if text := m.input.Value(); text != "" {

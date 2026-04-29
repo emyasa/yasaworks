@@ -11,14 +11,28 @@ func (m Model) canScrollUp() bool {
 	return m.Mode == Normal && m.messagesCursorIndex - messagesWindowSize >= 0
 }
 
+func (m Model) canScrollDown() bool {
+	return m.Mode == Normal && m.messagesCursorIndex < len(m.messages) - 1
+}
+
 func (m *Model) scrollUp() {
 	m.messagesCursorIndex--
 
-	if m.hasReachedStart || m.messagesCursorIndex >= messagesBufferSize/2 {
+	if m.hasReachedStart || m.messagesCursorIndex >= messagesBufferSize / 2 {
 		return
 	}
 
 	m.bufferPrevious()
+}
+
+func (m *Model) scrollDown() {
+	m.messagesCursorIndex++
+
+	if m.hasReachedEnd || m.messagesCursorIndex <= messagesBufferSize / 2 {
+		return
+	}
+
+	m.bufferNext()
 }
 
 func (m *Model) bufferPrevious() {
@@ -32,6 +46,18 @@ func (m *Model) bufferPrevious() {
 	}
 
 	m.hasReachedEnd = false
+}
+
+func (m *Model) bufferNext() {
+	message := m.messages[messagesWindowSize]
+	m.messages = m.fetchMessages(message.timestamp, true)
+
+	m.messagesCursorIndex -= messagesWindowSize
+	if len(m.messages) < messagesBufferSize {
+		m.hasReachedEnd = true
+	}
+
+	m.hasReachedStart = false
 }
 
 func (m Model) fetchMessages(timestamp time.Time, next bool) []message {
