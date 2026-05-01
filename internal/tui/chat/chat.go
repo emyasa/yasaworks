@@ -24,8 +24,8 @@ const (
 )
 
 const (
-	messagesBufferSize = 20
-	messagesWindowSize = 5
+	messagesBufferSize = 30
+	messagesWindowSize = 20
 )
 
 type message struct {
