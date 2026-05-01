@@ -177,7 +177,22 @@ func (m Model) View() string {
 	messages := m.messages[windowStart : m.messagesCursorIndex + 1]
 
 	sb := strings.Builder{}
+	var lastDate string
+
 	for _, message := range messages {
+		currentDate := message.timestamp.Format("2006-01-02")
+		if lastDate != currentDate {
+			dateLabel := message.timestamp.Format("Jan 02, 2006")
+			separator := lipgloss.NewStyle().
+				Width(80).
+				Align(lipgloss.Center).
+				Foreground(m.theme.Border()).
+				Render("---- " + dateLabel + " -----")
+
+			sb.WriteString(separator + "\n")
+		}
+		lastDate = currentDate
+
 		bubbleStyle := m.theme.ReceiverBubbleStyle()
 		position := lipgloss.Left
 
