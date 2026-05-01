@@ -16,7 +16,7 @@ var (
 )
 
 const (
-	limit = 20
+	limit = 50 
 	windowSize = time.Hour
 )
 
