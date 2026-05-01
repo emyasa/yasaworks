@@ -84,7 +84,7 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor
 	}
 
 	query += cursorQuery
-	query += "LIMIT 30"
+	query += "LIMIT 20"
 
 	rows, err := db.handle.QueryContext(ctx, query, args...)
 	if err != nil {

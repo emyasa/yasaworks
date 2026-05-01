@@ -24,8 +24,8 @@ const (
 )
 
 const (
-	messagesBufferSize = 30
-	messagesWindowSize = 20
+	messagesBufferSize = 20
+	messagesWindowSize = 5
 )
 
 type message struct {
@@ -79,6 +79,8 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		input: ti,
 		messagesCursorIndex: len(messages) - 1,
 		messages: mapMessages(messages),
+		hasReachedStart: len(messages) <= messagesWindowSize,
+		hasReachedEnd: true,
 	}
 }
 
