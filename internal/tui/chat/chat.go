@@ -24,8 +24,8 @@ const (
 )
 
 const (
-	messagesBufferSize = 20
-	messagesWindowSize = 5
+	messagesBufferSize = 80
+	messagesWindowSize = 20
 )
 
 type message struct {
@@ -57,7 +57,7 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		log.Fatal("chat's NewModel requires *conn")
 	}
 
-	messages, err := db.ListMessages(ctx, conn.Fingerprint, nil)
+	messages, err := db.ListMessages(ctx, conn.Fingerprint, messagesBufferSize, nil)
 	if err != nil {
 		log.Fatalf("chat's NewModel error: %s", err)
 	}
@@ -79,7 +79,7 @@ func NewModel(ctx context.Context, db *db.DB, theme theme.Theme, conn *registry.
 		input: ti,
 		messagesCursorIndex: len(messages) - 1,
 		messages: mapMessages(messages),
-		hasReachedStart: len(messages) <= messagesWindowSize,
+		hasReachedStart: len(messages) <= messagesBufferSize,
 		hasReachedEnd: true,
 	}
 }

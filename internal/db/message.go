@@ -52,7 +52,7 @@ func (db *DB) CreateMessage(ctx context.Context, r CreateMessageRequest) error {
 	return nil
 }
 
-func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor *MessageCursor) ([]Message, error) {
+func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, limit int, cursor *MessageCursor) ([]Message, error) {
 	ctx, span := tracer.Start(ctx, "ListMessages")
 	defer span.End()
 
@@ -84,7 +84,9 @@ func (db *DB) ListMessages(ctx context.Context, clientFingerprint string, cursor
 	}
 
 	query += cursorQuery
-	query += "LIMIT 20"
+	query += "LIMIT ?"
+
+	args = append(args, limit)
 
 	rows, err := db.handle.QueryContext(ctx, query, args...)
 	if err != nil {

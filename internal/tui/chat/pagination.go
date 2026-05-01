@@ -64,6 +64,7 @@ func (m Model) fetchMessages(timestamp time.Time, next bool) []message {
 	msgs, err := m.db.ListMessages(
 		m.ctx,
 		m.conn.Fingerprint,
+		messagesBufferSize,
 		&db.MessageCursor{
 			CreatedAt: timestamp,
 			FetchNext: next,
