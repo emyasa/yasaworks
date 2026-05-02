@@ -19,7 +19,9 @@ func (m model) footerView() string {
 		PaddingBottom(1)
 
 	sb := strings.Builder{}
-	navCommandsContent := base("navigate:") + " " + bold("j") + " " + base("↓") +  " " + bold("k") + " " + base("↑")
+	navCommandsContent := base("navigate:") + " " + 
+		bold("j") + " " + base("↓") +  " " + 
+		bold("k") + " " + base("↑")
 	widthTaken := lipgloss.Width(navCommandsContent)
 	navCommands := lipgloss.NewStyle().
 		Width(widthTaken).
