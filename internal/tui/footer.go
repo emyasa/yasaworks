@@ -29,6 +29,14 @@ func (m model) footerView() string {
 		Render(navCommandsContent)
 	sb.WriteString(navCommands)
 
+	if m.page == chatPage {
+		modeCommand := "  " + base("switch mode:") + " " +
+			bold("Ctrl + c") + " " + base("normal") + " " +
+			bold("i") + " " + base("insert")
+		sb.WriteString(modeCommand)
+		widthTaken += lipgloss.Width(modeCommand)
+	}
+
 	quitCommand := lipgloss.NewStyle().
 		Width(footerWidth - widthTaken).
 		Align(lipgloss.Right).
