@@ -174,7 +174,7 @@ func (m *Model) updateChats(content string, isSender bool) {
 	}
 
 	m.messages = append(m.messages, message)
-	m.messagesCursorIndex++
+	m.messagesCursorIndex = len(m.messages) - 1
 }
 
 func (m Model) View() string {
