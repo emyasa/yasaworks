@@ -1,3 +1,6 @@
+# Create or open db
+sqlite3 data/main.db
+
 # Run migration
 sqlite3 data/main.db < migrations/file.sql
 
