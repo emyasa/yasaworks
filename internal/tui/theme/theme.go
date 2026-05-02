@@ -70,7 +70,7 @@ func (b Theme) Highlight() lipgloss.TerminalColor {
 
 func (b Theme) SenderBubbleStyle() lipgloss.Style {
 	return b.Base().
-		Background(lipgloss.Color("#00ADD8")).
+		Background(lipgloss.Color("#0A84FF")).
 		Foreground(lipgloss.Color("#FFFFFF")).
 		Padding(0, 1)
 }
